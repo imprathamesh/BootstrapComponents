@@ -1,0 +1,47 @@
+﻿<div class="modal fade" id="@ModalID" tabindex="-1" role="dialog" aria-labelledby="@TitleID" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog @Size modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header @ToggleHeader()">
+                <h5 class="modal-title" id="@TitleID">@Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            </div>
+            <div class="modal-body text-start">
+                @BodyTemplate
+            </div>
+            <div class="modal-footer @ToggleFooter()">
+                <button type="button" class="btn btn-link" data-bs-dismiss="modal">Close</button>
+                @FooterTemplate
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? ModalID { get; set; }
+    [Parameter] public string? TitleID { get; set; }
+    [Parameter] public bool ShowFooter { get; set; } = true;
+    [Parameter] public bool ShowHeader { get; set; } = true;
+    [Parameter] public ModalSize Size { get; set; } = ModalSize.Medium;
+    [Parameter] public string? Title { get; set; } = "Confirm";
+    [Parameter] public RenderFragment? BodyTemplate { get; set; }
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ToggleFooter()
+    {
+        if (!ShowFooter)
+        {
+            return "collapse";
+        }
+        return String.Empty;
+    }
+    private string ToggleHeader()
+    {
+        if (!ShowHeader)
+        {
+            return "collapse";
+        }
+        return String.Empty;
+    }
+}

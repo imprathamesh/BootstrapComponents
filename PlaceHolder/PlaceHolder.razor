@@ -1,0 +1,9 @@
+﻿<span class="placeholder @Color.Name @ColumnSize.Name @PlaceHolderSize.Name @Class"></span>
+
+
+@code {
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Secondary;
+    [Parameter] public PlaceHolderSize PlaceHolderSize { get; set; } = PlaceHolderSize.Large;
+    [Parameter] public ColumnSize ColumnSize { get; set; } = ColumnSize.Eight;
+}

@@ -1,0 +1,16 @@
+﻿.avatar-layout {
+    display: flex;
+}
+
+.avatar-layout .name {
+    display: grid;
+    place-items: center;
+    margin-left: 8px;
+}
+
+.avatar {
+    display: grid;
+    background-color: #000;
+    color: #FFF;
+    place-items: center;
+}

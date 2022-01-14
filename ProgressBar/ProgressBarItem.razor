@@ -1,0 +1,30 @@
+﻿<div class="progress-bar @Color.Name @Class @Striped() @Animate()" role="progressbar" style="height:@(Height + "px"); width: @(ValueNow+"%");" aria-valuenow="@ValueNow" aria-valuemin="0" aria-valuemax="@ValueMax" @attributes="@AdditionalAttributes">@ChildContent</div>
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public float ValueNow { get; set; }
+    [Parameter] public float ValueMax { get; set; }
+    [Parameter] public float Height { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter] public bool IsStriped { get; set; }
+    [Parameter] public bool IsAnimate { get; set; }
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string Striped()
+    {
+        if (IsStriped)
+        {
+            return "progress-bar-striped";
+        }
+        return string.Empty;
+    }
+
+    private string Animate()
+    {
+        if (IsAnimate)
+        {
+            return "progress-bar-animated";
+        }
+        return string.Empty;
+    }
+}

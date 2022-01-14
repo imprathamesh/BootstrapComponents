@@ -1,0 +1,10 @@
+﻿<nav aria-label="breadcrumb" class="@Class">
+    <ol class="breadcrumb mb-3" @attributes="AdditionalAttributes">
+        @ChildContent
+    </ol>
+</nav>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+}

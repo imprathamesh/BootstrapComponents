@@ -1,0 +1,19 @@
+﻿<div class="avatar-layout">
+    <div class="avatar" style="background-color:@BackgroundColor;width:@Size;height:@Size;border-radius:@Size">
+        @ChildContent
+    </div>
+    @if (ShowTitle == true)
+    {
+        <div class="name">
+            <span>@Title</span>
+        </div>
+    }
+
+</div>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string BackgroundColor { get; set; } = "#0066cc";
+    [Parameter] public string Size { get; set; } = "32px";
+    [Parameter] public string Title { get; set; }
+    [Parameter] public bool ShowTitle { get; set; } = true;
+}

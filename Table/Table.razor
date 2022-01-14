@@ -1,0 +1,118 @@
+﻿@typeparam TItem
+@using BootstrapComponents.Grid
+@using BootstrapComponents.Jumbotron
+@inject NavigationManager NavigationManager
+
+<Row Class="mb-2 d-print-none">
+    <Column Size="ColumnSize.Two">
+        @SearchTemplate
+    </Column>
+    <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
+</Row>
+@if (Items == null)
+{
+    <TableSkeletonLoading />
+}
+else if (Items.Count == 0)
+{
+    if (ShowMessage)
+    {
+        <Row>
+            <Column Size="ColumnSize.Four"></Column>
+            <Column Size="ColumnSize.Four">
+                <Jumbotron Class="text-center">
+                    <img src="img/undraw_empty_xct9.svg" alt="empty" class="mb-4 img-fluid " />
+                    <p class="mb-3"><strong>Sorry!</strong> No Data Available.</p>
+                    <a href="/@NavigationManager.ToBaseRelativePath(NavigationManager.Uri)/create" class="btn btn-primary @ButtonVisible"><i class="las la-plus fa-fw"></i> New</a>
+                </Jumbotron>
+            </Column>
+            <Column Size="ColumnSize.Four"></Column>
+        </Row>
+    }
+}
+else
+{
+    <div class="table-responsive" id="@("table"+ @ID)" @attributes="AdditionalAttributes">
+        <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" id="@ID">
+            <thead>
+                <tr>
+                    @TableHeadTemplate
+                </tr>
+            </thead>
+            <tbody>
+                @TableBodyTemplate
+            </tbody>
+            @if (ShowFooter)
+            {
+                <tfoot>
+                    @TableFooterTemplate
+                </tfoot>
+            }
+        </table>
+    </div>
+}
+@if (ShowPagination)
+{
+    <Row>
+        <Column Size="ColumnSize.Three">
+            @CountTemplate
+        </Column>
+        <Column Size="ColumnSize.Three">
+        </Column>
+        <Column Size="ColumnSize.Three">
+        </Column>
+        <Column Size="ColumnSize.Three" Class="text-end">@PaginationTemplate</Column>
+    </Row>
+}
+@code {
+    [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
+
+    [Parameter] public string? ButtonVisible { get; set; }
+    [Parameter] public bool ShowMessage { get; set; } = true;
+    [Parameter] public bool ShowFooter { get; set; } = false;
+    [Parameter] public string? ondragOver { get; set; }
+    [Parameter] public string? ID { get; set; }
+    [Parameter] public bool IsHover { get; set; } = true;
+    [Parameter] public bool IsStriped { get; set; } = true;
+    [Parameter] public bool IsBackground { get; set; } = true;
+    [Parameter] public bool ShowPagination { get; set; } = true;
+
+    [Parameter] public RenderFragment? NullTemplate { get; set; }
+    [Parameter] public RenderFragment? EmptyTemplate { get; set; }
+    [Parameter] public RenderFragment? ExportTemplate { get; set; }
+    [Parameter] public RenderFragment? SearchTemplate { get; set; }
+    [Parameter] public RenderFragment? PaginationTemplate { get; set; }
+    [Parameter] public RenderFragment? CountTemplate { get; set; }
+    [Parameter] public RenderFragment? TableHeadTemplate { get; set; }
+    [Parameter] public RenderFragment? TableBodyTemplate { get; set; }
+    [Parameter] public RenderFragment? TableFooterTemplate { get; set; }
+    [Parameter] public RenderFragment<TItem>? WithIndividualElementTemplate { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    string Hover()
+    {
+        if (IsHover)
+        {
+            return "table-hover";
+        }
+        return String.Empty;
+    }
+    string Striped()
+    {
+        if (IsStriped)
+        {
+            return "table-striped";
+        }
+        return String.Empty;
+    }
+    string Background()
+    {
+        if (IsBackground)
+        {
+            return "table-bg";
+        }
+        return String.Empty;
+    }
+}

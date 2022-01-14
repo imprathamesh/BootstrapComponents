@@ -1,0 +1,33 @@
+﻿<li>
+    <a class="dropdown-item @Class" href="@Link" id="@ID" role="button" @attributes="@AdditionalAttributes">
+
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <div class="d-flex flex-row">
+                <div class="">
+                    <i class="las la-@Icon @IconClass la-fw "></i>
+                </div>
+                <div>
+                    @Title
+                </div>
+            </div>
+        }
+        else
+        {
+            @Title
+        }
+
+    </a>
+</li>
+
+@code {
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string IconClass { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string ID { get; set; }
+    [Parameter] public string Link { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+}

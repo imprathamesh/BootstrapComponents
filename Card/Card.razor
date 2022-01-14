@@ -1,0 +1,18 @@
+﻿<div class="card shadow-lg mb-2 @StateType @IsVisible() @Class">
+    <div class="card-body">
+        @ChildContent
+    </div>
+</div>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool Visible { get; set; } = true;
+    [Parameter] public string StateType { get; set; } = "primary";
+    [Parameter] public string Class { get; set; }
+
+    public string IsVisible()
+    {
+        if (Visible == false)
+            return "collapse";
+        return null;
+    }
+}

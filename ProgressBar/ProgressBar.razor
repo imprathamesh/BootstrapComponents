@@ -1,0 +1,8 @@
+﻿<div class="progress @Class" style="height: @( Height + "px")">
+    @ChildContent
+</div>
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Height { get; set; }
+}

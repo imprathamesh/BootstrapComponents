@@ -1,0 +1,10 @@
+﻿<div class="p-5 mb-4 rounded-3 @Class">
+    <div class="container-fluid py-5">
+        @ChildContent
+    </div>
+</div>
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Class { get; set; }
+}

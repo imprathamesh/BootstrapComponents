@@ -1,0 +1,25 @@
+﻿@using BootstrapComponents.PlaceHolder
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col" class="placeholder-glow"> <PlaceHolder Color="Color.Primary" /></th>
+            <th scope="col" class="placeholder-glow"> <PlaceHolder Color="Color.Primary" /></th>
+            <th scope="col" class="placeholder-glow"> <PlaceHolder Color="Color.Primary" /></th>
+            <th scope="col" class="placeholder-glow"> <PlaceHolder Color="Color.Primary" /></th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 1; i <= 10; i++)
+        {
+            <tr>
+                <td class="placeholder-glow"><PlaceHolder /></td>
+                <td class="placeholder-glow"><PlaceHolder /></td>
+                <td class="placeholder-glow"><PlaceHolder /></td>
+                <td class="placeholder-glow"><PlaceHolder /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+
+}

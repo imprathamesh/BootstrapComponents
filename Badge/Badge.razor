@@ -1,0 +1,48 @@
+﻿
+<span class="badge @Rounded() bg-@Color.Name @Class">
+    @ChildContent
+</span>
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public bool IsRounded { get; set; }
+    [Parameter] public bool IsFaint { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+
+    private string Rounded()
+    {
+        if (IsRounded)
+        {
+            return "rounded-pill";
+        }
+        return string.Empty;
+    }
+
+    private string BgColor()
+    {
+        if (IsFaint)
+        {
+            switch (Color)
+            {
+                //case Color.Primary:
+                //    return "bg-faint-primary";
+                //case Color.Secondary:
+                //    return "bg-faint-secondary";
+                //case Color.Warning:
+                //    return "bg-faint-warning";
+                //case Color.Danger:
+                //    return "bg-faint-danger";
+                //case Color.Dark:
+                //    return "bg-faint-dark";
+                //case Color.Light:
+                //    return "bg-faint-light";
+                //case Color.Info:
+                //    return "bg-faint-info";
+                //case Color.Success:
+                //    return "bg-faint-success";
+            }
+        }
+
+        return "bg-primary";
+    }
+}

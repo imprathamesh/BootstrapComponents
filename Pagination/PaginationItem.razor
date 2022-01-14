@@ -1,0 +1,6 @@
+﻿<li class="page-item"><a class="page-link" href="@Link">@LinkTitle</a></li>
+@code {
+    [Parameter] public string? LinkTitle { get; set; }
+    [Parameter] public string? Link { get; set; } = "#";
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}
