@@ -17,7 +17,7 @@
     [Parameter] public int TotaPagesQuantity { get; set; }
     [Parameter] public int Radius { get; set; } = 1;
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
-    List<LinkModel>? links;
+    List<LinkModel> links = new();
     protected override void OnParametersSet()
     {
         LoadPages();

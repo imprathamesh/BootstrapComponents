@@ -4,17 +4,17 @@
 </li>
 
 @code {
-    
-    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public bool Active { get; set; }
-    [Parameter] public string AriaCurrent { get; set; } = "page";
-    [Parameter] public string Link { get; set; } = "#";
-    [Parameter] public string LinkTitle { get; set; } 
+    [Parameter] public string? AriaCurrent { get; set; } = "page";
+    [Parameter] public string? Link { get; set; } = "#";
+    [Parameter] public string? LinkTitle { get; set; }
 
     public string IsActive()
     {
         if (Active == true)
             return "active";
-        return null;
+        return string.Empty;
     }
 }

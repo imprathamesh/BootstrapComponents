@@ -1,33 +1,19 @@
 ﻿
-<ul class="nav nav-pills mb-3 @SetNavType() @Class" id="@ID" role="tablist" @attributes="@AdditionalAttributes">@ChildContent </ul>
+<ul class="nav nav-pills mb-3 @Class" role="tablist" @attributes="@AdditionalAttributes">
+    @ChildContent
+</ul>
 <div class="tab-content" id="@TabContentID">
     @TabContent
 </div>
 
 
 @code {
-    [Parameter] public string ID { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string NavType { get; set; } = "pill";
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public RenderFragment TabContent { get; set; }
+
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public NavType NavType { get; set; } = NavType.Pill;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? TabContent { get; set; }
     [Parameter] public string TabContentID { get; set; } = "myTabContent";
-    [Parameter] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private string SetNavType()
-    {
-        if (!string.IsNullOrEmpty(NavType.ToLower()))
-        {
-            switch (NavType)
-            {
-                case "pill":
-                    return "nav-pills";
-                case "tab":
-                    return "nav-tabs";
-            }
-
-        }
-        return "nav-pills";
-
-    }
 }

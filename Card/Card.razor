@@ -1,18 +1,16 @@
-﻿<div class="card shadow-lg mb-2 @StateType @IsVisible() @Class">
-    <div class="card-body">
-        @ChildContent
+﻿@if (Visible)
+{
+    <div class="card shadow-lg mb-2 bg-@BackgroundColor.Name text-@TextColor.Name @Shadow.Name @Class">
+        <div class="card-body">
+            @ChildContent
+        </div>
     </div>
-</div>
+}
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public bool Visible { get; set; } = true;
-    [Parameter] public string StateType { get; set; } = "primary";
-    [Parameter] public string Class { get; set; }
-
-    public string IsVisible()
-    {
-        if (Visible == false)
-            return "collapse";
-        return null;
-    }
+    [Parameter] public Color BackgroundColor { get; set; } = Color.White;
+    [Parameter] public Color TextColor { get; set; } = Color.Dark;
+    [Parameter] public ShadowSize Shadow { get; set; } = ShadowSize.Large;
+    [Parameter] public string? Class { get; set; }
 }

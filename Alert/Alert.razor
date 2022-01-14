@@ -1,53 +1,23 @@
-﻿<div class="alert @AlertStateType(StateType) alert-dismissible @IsVisible()" role="alert">
-    <div class="d-flex align-items-center">
-        <button type="button" class="btn-close @CloseIsVisible()" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <div class=""><i class="@Icon la-2x me-2"></i></div>
-        <div>@ChildContent</div>
-    </div>
-</div>
-@code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public bool Visible { get; set; }
-    [Parameter] public bool CloseButtonVisible { get; set; }
-    [Parameter] public string StateType { get; set; }
-    [Parameter] public string Icon { get; set; }
-
-    public string IsVisible()
-    {
-        if (Visible == false)
-            return "collapse";
-        return string.Empty;
-    }
-    public string CloseIsVisible()
-    {
-        if (CloseButtonVisible == false)
-            return "collapse";
-        return string.Empty;
-    }
-    private string AlertStateType(string stateType)
-    {
-        if (!string.IsNullOrEmpty(stateType))
-        {
-            switch (stateType.ToLower())
+﻿@if (Visible)
+{
+    <div class="alert alert-@BackgroundColor.Name text-@TextColor.Name alert-dismissible" role="alert" @attributes="AdditionalAttributes">
+        <div class="d-flex align-items-center">
+            @if (ShowCloseButton)
             {
-                case "primary":
-                    return "alert-primary";
-                case "secondary":
-                    return "alert-secondary";
-                case "warning":
-                    return "alert-warning";
-                case "danger":
-                    return "alert-danger";
-                case "dark":
-                    return "alert-dark";
-                case "light":
-                    return "alert-light";
-                case "info":
-                    return "alert-info";
-                case "success":
-                    return "alert-success";
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             }
-        }
-        return "alert-primary";
-    }
+            <div class=""><i class="@Icon la-2x me-2"></i></div>
+            <div>@ChildContent</div>
+        </div>
+    </div>
 }
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public bool ShowCloseButton { get; set; }
+    [Parameter] public Color BackgroundColor { get; set; } = Color.Primary;
+    [Parameter] public Color TextColor { get; set; } = Color.White;
+    [Parameter] public string? Icon { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+   }

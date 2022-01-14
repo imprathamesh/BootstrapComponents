@@ -1,5 +1,9 @@
-﻿<h3>TableTd</h3>
+﻿<td class="@TextAlign.Name @Class">
+    @ChildContent
+</td>
 
-@code {
-
-}
+    @code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public TextAlign TextAlign { get; set; } = TextAlign.Start;
+    [Parameter] public string? Class { get; set; }
+    }
