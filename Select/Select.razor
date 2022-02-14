@@ -1,24 +1,22 @@
-﻿
-@typeparam T
-@inherits InputBase<T>
+﻿@typeparam Model
+@inherits InputBase<Model>
 
 <InputSelect class="form-control" @bind-Value="HandleChange">
     @ChildContent
-    @foreach (T c in Data)
+    @foreach (Model c in Data)
     {
         <option value="@(Data.FindIndex(a=> a.ToString() == c.ToString()))">@c</option>
     }
 </InputSelect>
 
 @code {
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
-    int r = 1;
-    [Parameter]
-    public List<T> Data { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// List of data want to present
+    /// </summary>
+    [Parameter] public List<Model> Data { get; set; }
 
-    [Parameter]
-    public Func<string, T> Parser { get; set; }
+    [Parameter] public Func<string, Model> Parser { get; set; }
 
     public string HandleChange
     {
@@ -26,7 +24,7 @@
         set { CurrentValueAsString = value; }
     }
 
-    protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string value, out Model result, out string validationErrorMessage)
     {
         result = Parser(value);
         /*if (value == "Los Angeles" || value == "30")
