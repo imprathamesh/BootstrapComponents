@@ -1,19 +1,30 @@
-﻿
-<span class="badge @Rounded() bg-@Color.Name bg-opacity-@ColorOpacity.Name @Class">
+﻿<span class="badge @Rounded() bg-@Color.Name text-@TextColor.Name @Bordered() border-@BorderColor.Name bg-opacity-@ColorOpacity.Name @Class">
     @ChildContent
 </span>
+
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string? Class { get; set; }
-    [Parameter] public bool IsRounded { get; set; }
-    [Parameter] public ColorOpacity ColorOpacity { get; set; } = ColorOpacity.Fifty;
+    [Parameter] public bool IsRounded { get; set; } = true;
+    [Parameter] public bool IsBordered { get; set; } = false;
+    [Parameter] public ColorOpacity ColorOpacity { get; set; } = ColorOpacity.TwentyFive;
     [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter] public Color TextColor { get; set; } = Color.White;
+    [Parameter] public Color BorderColor { get; set; } = Color.Primary;
 
     private string Rounded()
     {
         if (IsRounded)
         {
             return "rounded-pill";
+        }
+        return string.Empty;
+    }
+    private string Bordered()
+    {
+        if (IsBordered)
+        {
+            return "border";
         }
         return string.Empty;
     }

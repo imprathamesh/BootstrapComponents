@@ -1,0 +1,12 @@
+﻿<div class="rating">
+    @for (int i = Count; i >= 1; i--)
+    {
+        <input type="radio" value="@i" name="rating" id="rating-@i" />
+        <label for="rating-@i" title="@i stars"><i class="@Icon"></i></label>
+    }
+</div>
+@code
+{
+    [Parameter] public int Count { get; set; } = 5;
+    [Parameter] public string Icon { get; set; } = "las la-star";
+}

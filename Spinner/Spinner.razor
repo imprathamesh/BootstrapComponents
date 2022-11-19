@@ -1,9 +1,11 @@
-﻿<div class="d-flex justify-content-center">
-    <div class="spinner-border" role="status">
-        <span class="sr-only"></span>
-    </div>
-</div>
-
+﻿<span class="spinner-@SpinnerType.Name spinner-border-@Size.Name @Class" role="status" aria-hidden="true">
+    <span class="visually-hidden">Loading...</span>
+    @ChildContent
+</span>
 @code {
-
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter] public Size Size { get; set; } = Size.Small;
+    [Parameter] public SpinnerType SpinnerType { get; set; } = SpinnerType.Border;
 }

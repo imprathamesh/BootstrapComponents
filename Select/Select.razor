@@ -1,0 +1,38 @@
+﻿@typeparam Model
+@inherits InputBase<Model>
+
+<InputSelect class="form-control" @bind-Value="HandleChange">
+    @ChildContent
+    @foreach (Model c in Data)
+    {
+        <option value="@(Data.FindIndex(a=> a.ToString() == c.ToString()))">@c</option>
+    }
+</InputSelect>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// List of data want to present
+    /// </summary>
+    [Parameter] public List<Model> Data { get; set; }
+
+    [Parameter] public Func<string, Model> Parser { get; set; }
+
+    public string HandleChange
+    {
+        get { return CurrentValueAsString; }
+        set { CurrentValueAsString = value; }
+    }
+
+    protected override bool TryParseValueFromString(string value, out Model result, out string validationErrorMessage)
+    {
+        result = Parser(value);
+        /*if (value == "Los Angeles" || value == "30")
+        {
+            validationErrorMessage = "Data unaccepted";
+            return false;
+        }*/
+        validationErrorMessage = null;
+        return true;
+    }
+}

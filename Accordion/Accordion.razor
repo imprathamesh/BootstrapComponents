@@ -1,0 +1,10 @@
+﻿<div class="accordion accordion-flush @Class" id="@ID">
+    @ChildContent
+</div>
+
+
+@code {
+    [Parameter] public string Class { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string ID { get; set; }
+}

@@ -2,23 +2,35 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Content Remove="Textbox\PasswordBox.razor" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
+    <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.11" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Accordion\" />
+    <UpToDateCheckInput Remove="Textbox\PasswordBox.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Textbox\PasswordBox.razor" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Accordion\Accordion.razor" />
+    <None Include="Textbox\PasswordBox.razor" />
+  </ItemGroup>
 
 </Project>
