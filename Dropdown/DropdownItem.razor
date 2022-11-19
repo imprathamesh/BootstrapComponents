@@ -2,8 +2,8 @@
     <a class="dropdown-item @IsActive() @Class" href="@Link" id="@ID" role="button" @attributes="@AdditionalAttributes">
         @if (!string.IsNullOrEmpty(Icon))
         {
-            <div class="d-flex flex-row">
-                <div class="">
+            <div class="d-flex flex-row align-items-center">
+                <div class="d-flex justify-content-center align-items-center me-1">
                     <i class="las la-@Icon @IconClass la-fw "></i>
                 </div>
                 <div>
