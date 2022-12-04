@@ -1,5 +1,5 @@
 ﻿
-<div class="dropdown @Class">
+<div class="dropdown @Class" data-bs-toggle="@SetTooltip()" data-bs-title="@Tooltip">
     <button class="btn btn-@Color.Name btn-@Size.Name dropdown-toggle dropdown-menu-@Direction.Name" type="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
         @if (!string.IsNullOrEmpty(Icon))
         {
@@ -19,10 +19,21 @@
     [Parameter] public string? Icon { get; set; }
     [Parameter] public string? Title { get; set; }
     [Parameter] public string? ID { get; set; }
+    [Parameter] public string? Tooltip { get; set; }
     [Parameter] public Color Color { get; set; } = Color.Transparent;
     [Parameter] public ButtonSize Size { get; set; } = ButtonSize.Medium;
     [Parameter] public Direction Direction { get; set; } = Direction.Start;
     [Parameter] public AutoClose AutoClose { get; set; } = AutoClose.True;
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+
+    string SetTooltip()
+    {
+        if (!string.IsNullOrEmpty(Tooltip))
+        {
+            return "tooltip";
+        }
+        return string.Empty;
+    }
 }
