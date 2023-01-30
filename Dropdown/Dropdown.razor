@@ -3,7 +3,7 @@
     <button class="btn btn-@Color.Name btn-@Size.Name dropdown-toggle dropdown-menu-@Direction.Name" type="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
         @if (!string.IsNullOrEmpty(Icon))
         {
-            <i class="las la-@Icon la-fw @IconClass"></i>
+            <i class="@Icon @IconClass"></i>
         }
         @Title
     </button>
