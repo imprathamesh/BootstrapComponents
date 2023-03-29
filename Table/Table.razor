@@ -32,24 +32,45 @@ else if (Items.Count == 0)
 }
 else
 {
-    <div class="table-responsive" id="@("table"+ @ID)" @attributes="AdditionalAttributes">
-        <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" id="@ID">
-            <thead>
-                <tr>
-                    @TableHeadTemplate
-                </tr>
-            </thead>
-            <tbody>
-                @TableBodyTemplate
-            </tbody>
-            @if (ShowFooter)
-            {
-                <tfoot>
-                    @TableFooterTemplate
-                </tfoot>
-            }
-        </table>
-    </div>
+    @if (MobileView)
+    {
+        <div class="table-responsive d-none d-sm-block">
+            <table class="table table-hover table-bg shadow-sm" ondragover="@ondragOver">
+                <thead>
+                    <tr>
+                        @TableHeadTemplate
+                    </tr>
+                </thead>
+                <tbody>
+                    @TableBodyTemplate
+                </tbody>
+            </table>
+        </div>
+        <div class="d-block d-sm-none mb-3">
+            @ListTemplate
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive" id="@("table"+ @ID)" @attributes="AdditionalAttributes">
+            <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" id="@ID">
+                <thead>
+                    <tr>
+                        @TableHeadTemplate
+                    </tr>
+                </thead>
+                <tbody>
+                    @TableBodyTemplate
+                </tbody>
+                @if (ShowFooter)
+                {
+                    <tfoot>
+                        @TableFooterTemplate
+                    </tfoot>
+                }
+            </table>
+        </div>
+    }
 }
 @if (ShowPagination)
 {
@@ -76,7 +97,7 @@ else
     [Parameter] public bool IsStriped { get; set; } = true;
     [Parameter] public bool IsBackground { get; set; } = true;
     [Parameter] public bool ShowPagination { get; set; } = true;
-
+    [Parameter] public bool MobileView { get; set; } = true;
     [Parameter] public RenderFragment? NullTemplate { get; set; }
     [Parameter] public RenderFragment? EmptyTemplate { get; set; }
     [Parameter] public RenderFragment? ExportTemplate { get; set; }
@@ -86,6 +107,7 @@ else
     [Parameter] public RenderFragment? TableHeadTemplate { get; set; }
     [Parameter] public RenderFragment? TableBodyTemplate { get; set; }
     [Parameter] public RenderFragment? TableFooterTemplate { get; set; }
+    [Parameter] public RenderFragment ListTemplate { get; set; }
     [Parameter] public RenderFragment<TItem>? WithIndividualElementTemplate { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
