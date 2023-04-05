@@ -1,10 +1,10 @@
-﻿<div class="accordion-item @Class" id="@ID">
+﻿<div class="accordion-item" id="@ID" @attributes="AdditionalAttributes">
     <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="@("#collapse"+ID)" aria-expanded="true" aria-controls="@("collapse"+ID)">
+        <button class="accordion-button @ToggleActive()" type="button" data-bs-toggle="collapse" data-bs-target="@("#collapse"+ID)" aria-expanded="true" aria-controls="@("collapse"+ID)">
             @Title
         </button>
     </h2>
-    <div id="@("collapse"+ID)" class="accordion-collapse collapse" aria-labelledby="@ID" data-bs-parent="#accordionExample">
+    <div id="@("collapse"+ID)" class="accordion-collapse collapse @ToggleShow()" aria-labelledby="@ID" data-bs-parent="#accordionExample">
         <div class="accordion-body">
             @ChildContent
         </div>
@@ -13,8 +13,27 @@
 
 
 @code {
-    [Parameter] public string Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
     [Parameter] public string Title { get; set; } = "Title";
     [Parameter] public string ID { get; set; }
+    [Parameter] public bool Show { get; set; } = false;
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    string ToggleShow()
+    {
+        if (Show is true)
+        {
+            return "show";
+        }
+        return string.Empty;
     }
+    string ToggleActive()
+    {
+        if (Show is false)
+        {
+            return "collapsed";
+        }
+        return string.Empty;
+    }
+}
