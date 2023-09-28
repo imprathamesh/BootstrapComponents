@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+
+<nav class="mobile-menu">
+    <ul>
+        @ChildContent
+    </ul>
+    <div class="bottom-space"></div>
+</nav>
+
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

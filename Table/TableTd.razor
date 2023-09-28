@@ -1,4 +1,4 @@
-﻿<td class="@TextAlign.Name @Class">
+﻿<td class="@TextAlign.Name @Class" @attributes="AdditionalAttributes">
     @ChildContent
 </td>
 
@@ -6,4 +6,5 @@
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public TextAlign TextAlign { get; set; } = TextAlign.Start;
     [Parameter] public string? Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
     }

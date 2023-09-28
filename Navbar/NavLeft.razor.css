@@ -1,0 +1,47 @@
+﻿:root {
+    --sidemenu: #1861ac;
+}
+
+.leftmenu {
+    background: var(--sidemenu);
+    height: calc(100vh );
+    /*top: 64px;*/
+    position: fixed;
+    left: -80px;
+    width: 80px;
+    z-index: 999;
+    -webkit-animation: slide 0.5s forwards;
+    animation: slide-right 0.5s forwards;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+    .leftmenu > ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+        .leftmenu > ul > li.logo {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 64px;
+            width: 100%;
+        }
+
+
+@-webkit-keyframes slide-right {
+    100% {
+        left: 0;
+    }
+}
+
+@keyframes slide-right {
+    100% {
+        left: 0;
+    }
+}

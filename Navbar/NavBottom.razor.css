@@ -1,0 +1,27 @@
+﻿.mobile-menu {
+    background-color: #FFF;
+    height: 72px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    border-top: 1px solid #eaeaea;
+    border-radius: 8px 8px 0 0;
+}
+
+    .mobile-menu > ul {
+        display: flex;
+        list-style-type: none;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        justify-content: space-around;
+    }
+
+        
+
+.bottom-space {
+    height: 18px;
+    width: 100%;
+    display: block;
+    background-color: #FFF;
+}

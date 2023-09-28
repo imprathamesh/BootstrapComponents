@@ -1,16 +1,28 @@
 ﻿@if (Visible)
 {
     <div class="card mb-3 bg-@BackgroundColor.Name text-@TextColor.Name shadow-@Shadow.Name border-0 @Class">
+       @* @if (Header)
+        {
+            <div class="card-header">@HeaderContent</div>
+        }*@
         <div class="card-body">
             @ChildContent
         </div>
+        @*@if (Footer)
+        {
+            <div class="card-footer">@FooterContent</div>
+        }*@
     </div>
 }
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? FooterContent { get; set; }
+    [Parameter] public RenderFragment? HeaderContent { get; set; }
     [Parameter] public bool Visible { get; set; } = true;
     [Parameter] public Color BackgroundColor { get; set; } = Color.White;
     [Parameter] public Color TextColor { get; set; } = Color.Dark;
     [Parameter] public ShadowSize Shadow { get; set; } = ShadowSize.Large;
     [Parameter] public string? Class { get; set; }
+    [Parameter] public bool Footer { get; set; } = false;
+    [Parameter] public bool Header { get; set; } = false;
 }

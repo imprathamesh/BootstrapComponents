@@ -1,0 +1,29 @@
+<nav class="leftmenu">
+    <ul>
+        <li class="logo">
+            <img alt="logo" src="@Logo" height="36" />
+        </li>
+        @*   <li class="nav-item logo @IsShowLogo()">
+        <a class="nav-link">
+        <img alt="logo" src="@Logo" height="36" />
+        </a>
+        <ul class="no-menu">
+        <li>Innovus Clinix</li>
+        </ul>
+        </li>*@
+        @ChildContent
+    </ul>
+</nav>
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool ShowLogo { get; set; } = true;
+    [Parameter] public string Logo { get; set; }
+
+    string IsShowLogo()
+    {
+        if (ShowLogo == false)
+            return "collapse";
+        return string.Empty;
+    }
+}
