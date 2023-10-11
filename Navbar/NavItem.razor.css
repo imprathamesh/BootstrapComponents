@@ -8,7 +8,7 @@
 }
 
     .leftmenu > ul > li.logo {
-        background: #FFFFFF;
+        background-color: #FFFFFF;
     }
 
         .leftmenu > ul > li.logo a.nav-link:hover {
@@ -49,7 +49,7 @@
     }
 
     .leftmenu > ul > li > ul {
-        background: var(--sidemenu);
+        background: #1861ac;
         list-style: none;
         padding: 0;
         margin: 0;

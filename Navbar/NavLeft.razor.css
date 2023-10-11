@@ -1,9 +1,4 @@
-﻿:root {
-    --sidemenu: #1861ac;
-}
-
-.leftmenu {
-    background: var(--sidemenu);
+﻿.leftmenu {
     height: calc(100vh );
     /*top: 64px;*/
     position: fixed;

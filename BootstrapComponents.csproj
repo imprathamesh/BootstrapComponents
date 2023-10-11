@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Include="Accordion\Accordion.razor" />
+    <None Include="Layouts\DefaultLayout.razor" />
     <None Include="Navbar\NavLeft.razor" />
     <None Include="Textbox\PasswordBox.razor" />
   </ItemGroup>
