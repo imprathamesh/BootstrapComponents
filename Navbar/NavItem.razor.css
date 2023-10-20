@@ -31,7 +31,7 @@
     }
 
     .leftmenu > ul > li.nav-item ::deep a:hover {
-        background-color: #1861ac;
+        background-color: rgba(255,255,255,.2);
     }
 
     .leftmenu > ul > li > a.nav-link > i {
@@ -41,7 +41,7 @@
     }
 
     .leftmenu > ul > li.nav-item ::deep a.active {
-        background-color: #1861ac;
+        background-color: rgba(255,255,255,.2);
         padding: 12px 12px;
         display: block;
         display: grid;
@@ -49,7 +49,7 @@
     }
 
     .leftmenu > ul > li > ul {
-        background: #1861ac;
+        background-color: #131313;
         list-style: none;
         padding: 0;
         margin: 0;
