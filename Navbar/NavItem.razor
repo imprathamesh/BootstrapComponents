@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <li class="nav-item @CssClass">
-    <NavLink class="nav-link" href="@Link" Match="NavLinkMatch.All">
+    <NavLink class="nav-link" href="@Link" Match="NavLinkMatch.Prefix">
         <i class="@Icon"></i>
     </NavLink>
     <ul class="no-menu @IsShowSubMenu()">

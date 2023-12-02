@@ -13,10 +13,14 @@
         </li>*@
         @ChildContent
     </ul>
+    <ul>
+        @SettingContent
+    </ul>
 </nav>
 @code
 {
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment SettingContent { get; set; }
     [Parameter] public bool ShowLogo { get; set; } = true;
     [Parameter] public string Logo { get; set; }
     [Parameter] public string BackgroundColor { get; set; }
