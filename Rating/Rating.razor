@@ -1,12 +1,31 @@
-﻿<div class="rating">
+﻿@inherits ComponentBase
+<div class="rating">
     @for (int i = Count; i >= 1; i--)
     {
-        <input type="radio" value="@i" name="rating" id="rating-@i" />
-        <label for="rating-@i" title="@i stars"><i class="@Icon"></i></label>
+        int currentRating = i;
+        <input type="radio" value="@currentRating" name="@Name" id="@Name-@currentRating" @onchange="(() => GetSelectedRating(currentRating))" checked="@(SelectedRating == currentRating)" />
+        <label for="@Name-@currentRating" title="@currentRating stars"><i class="@Icon"></i></label>
     }
 </div>
+
 @code
 {
     [Parameter] public int Count { get; set; } = 5;
-    [Parameter] public string Icon { get; set; } = "bi bi-star";
+    [Parameter] public string Icon { get; set; } = "bi bi-star-fill";
+    [Parameter] public int SelectedRating { get; set; } = 0;
+    [Parameter] public string Name { get; set; } = "rating";
+
+    [Parameter] public EventCallback<int> SelectedRatingChanged { get; set; }
+    private void GetSelectedRating(int value)
+    {
+        if (SelectedRating != value)
+        {
+            SelectedRating = value;
+            SelectedRatingChanged.InvokeAsync(value);
+        }
+    }
 }
+
+
+
+
