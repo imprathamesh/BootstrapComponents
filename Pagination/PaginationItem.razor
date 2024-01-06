@@ -1,6 +1,16 @@
-﻿<li class="page-item"><a class="page-link" href="@Link">@LinkTitle</a></li>
+﻿<li class="page-item">
+    <a class="page-link @Class" href="@Link" @attributes="AdditionalAttributes">
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <i class="@Icon"></i>
+        }
+        @LinkTitle
+    </a>
+</li>
 @code {
     [Parameter] public string? LinkTitle { get; set; }
-    [Parameter] public string? Link { get; set; } = "#";
+    [Parameter] public string? Link { get; set; }
+    [Parameter] public string? Class { get; set; } = string.Empty;
+    [Parameter] public string? Icon { get; set; } = string.Empty;
     [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 }
