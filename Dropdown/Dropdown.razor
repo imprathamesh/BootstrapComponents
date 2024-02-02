@@ -1,14 +1,27 @@
 ﻿
 <div class="dropdown @Class" data-bs-toggle="@SetTooltip()" data-bs-title="@Tooltip">
-    <button class="btn btn-@Color.Name btn-@Size.Name dropdown-toggle dropdown-menu-@Direction.Name" type="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
-        @if (!string.IsNullOrEmpty(Icon))
-        {
-            <i class="@Icon @IconClass"></i>
-        }
-        @Title
-    </button>
+    @if (Button == true)
+    {
+        <button class="btn btn-@Color.Name btn-@Size.Name dropdown-toggle dropdown-menu-@Direction.Name" type="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@Icon @IconClass"></i>
+            }
+            @Title
+        </button>
+    }
+    else
+    {
+        <span class="dropdown-toggle dropdown-menu-@Direction.Name" role="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@Icon @IconClass"></i>
+            }
+            @Title
+        </span>
+    }
 
-    <ul class="dropdown-menu" aria-labelledby="@ID">
+    <ul class="dropdown-menu shadow" aria-labelledby="@ID">
         @ChildContent
     </ul>
 </div>
@@ -20,6 +33,7 @@
     [Parameter] public string? Title { get; set; }
     [Parameter] public string? ID { get; set; }
     [Parameter] public string? Tooltip { get; set; }
+    [Parameter] public bool Button { get; set; } = true;
     [Parameter] public Color Color { get; set; } = Color.Transparent;
     [Parameter] public ButtonSize Size { get; set; } = ButtonSize.Medium;
     [Parameter] public Direction Direction { get; set; } = Direction.Start;

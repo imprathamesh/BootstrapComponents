@@ -10,7 +10,7 @@
             @SearchTemplate
         </Column>
         <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
-    </Row>
+        </Row>
 }
 @if (Items == null)
 {
@@ -38,7 +38,7 @@ else
     @if (MobileView)
     {
         <div class="table-responsive d-none d-sm-block">
-            <table class="table table-hover table-bg shadow-sm" ondragover="@ondragOver">
+            <table class="table table-hover" ondragover="@ondragOver">
                 <thead>
                     <tr>
                         @TableHeadTemplate
@@ -86,7 +86,7 @@ else
         <Column Size="ColumnSize.Three">
         </Column>
         <Column Size="ColumnSize.Three" Class="text-end">@PaginationTemplate</Column>
-    </Row>
+        </Row>
 }
 @code {
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
