@@ -1,6 +1,5 @@
 ﻿@typeparam TItem
 @using BootstrapComponents.Grid
-@using BootstrapComponents.Jumbotron
 @inject NavigationManager NavigationManager
 
 @if (ShowTableMenu)
@@ -20,17 +19,15 @@ else if (Items.Count == 0)
 {
     if (ShowMessage)
     {
-        <Row>
-            <Column Size="ColumnSize.Four"></Column>
-            <Column Size="ColumnSize.Four">
-                <Jumbotron Class="text-center">
-                    <img src="img/undraw_empty_xct9.svg" alt="empty" class="mb-4 img-fluid " />
-                    <p class="mb-3"><strong>Sorry!</strong> No Data Available.</p>
+        <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column gap-4">
+                <img src="img/no-data.svg" alt="no-data" class="img-fluid" />
+                <p class="text-center m-0"><strong>Sorry!</strong> No Data Available.</p>
+                <div class="text-center">
                     <a href="@(!string.IsNullOrEmpty(CreateNewLink) ? CreateNewLink : $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}/create")" class="btn btn-primary @ButtonVisible"><i class="bi bi-plus me-2"></i>New</a>
-                </Jumbotron>
-            </Column>
-            <Column Size="ColumnSize.Four"></Column>
-        </Row>
+                </div>
+            </div>
+        </div>
     }
 }
 else
@@ -44,7 +41,7 @@ else
                         @TableHeadTemplate
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider">
                     @TableBodyTemplate
                 </tbody>
             </table>
@@ -62,7 +59,7 @@ else
                         @TableHeadTemplate
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider">
                     @TableBodyTemplate
                 </tbody>
                 @if (ShowFooter)
