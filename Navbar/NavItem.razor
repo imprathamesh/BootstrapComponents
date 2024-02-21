@@ -1,12 +1,25 @@
 @using Microsoft.AspNetCore.Components.Routing
 
-<li class="nav-item @CssClass">
-    <NavLink class="nav-link" href="@Link" Match="NavLinkMatch.Prefix">
+<li class="nav-item menu-item @CssClass">
+    <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch">
         <i class="@Icon"></i>
     </NavLink>
-    <ul class="no-menu @IsShowSubMenu()">
-        <li>@LinkTitle</li>
-    </ul>
+    @if (MobileMenu == false)
+    {
+        @if (ShowSubMenu == true)
+        {
+            <ul class="sub-menu">
+                <li>@LinkTitle</li>
+                @ChildContent
+            </ul>
+        }
+        else
+        {
+            <ul class="no-menu">
+                <li>@LinkTitle</li>
+            </ul>
+        }
+    }
 </li>
 
 @code
@@ -16,12 +29,7 @@
     [Parameter] public string LinkTitle { get; set; }
     [Parameter] public string Link { get; set; }
     [Parameter] public string Icon { get; set; }
-    [Parameter] public bool ShowSubMenu { get; set; } = true;
-
-    string IsShowSubMenu()
-    {
-        if (ShowSubMenu == false)
-            return "collapse";
-        return string.Empty;
-    }
+    [Parameter] public bool ShowSubMenu { get; set; } = false;
+    [Parameter] public bool MobileMenu { get; set; } = false;
+    [Parameter] public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
 }

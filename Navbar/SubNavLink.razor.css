@@ -1,0 +1,41 @@
+﻿.sub-menu li {
+    text-align: left;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.sub-menu.no-menu {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+
+.sub-menu > li ::deep .nav-link {
+    text-align: left;
+    color: white;
+    font-size: 16px;
+    padding: 4px 8px;
+    opacity: .8;
+    pointer-events: auto;
+    white-space: nowrap;
+}
+
+.sub-menu > li:last-child ::deep .nav-link.active {
+    border-radius: 0 0 8px 0;
+}
+
+.sub-menu > li ::deep .nav-link.active {
+    background-color: #547233;
+    opacity: 1;
+}
+
+.sub-menu > li ::deep .nav-link:hover {
+    background-color: #547233;
+    opacity: 1;
+}
+
+.sub-menu > li:last-child ::deep .nav-link:hover {
+    border-radius: 0 0 8px 0;
+}

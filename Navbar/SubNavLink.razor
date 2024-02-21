@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Components.Routing
+<li class="">
+    <NavLink class="nav-link" href="@Link" Match="NavLinkMatch.Prefix">
+        @LinkTitle
+    </NavLink>
+</li>
+
+@code {
+    [Parameter] public string LinkTitle { get; set; }
+    [Parameter] public string Link { get; set; }
+}
