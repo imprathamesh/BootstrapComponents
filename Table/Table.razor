@@ -75,15 +75,9 @@ else
 @if (ShowPagination)
 {
     <Row>
-        <Column Size="ColumnSize.Three">
-            @CountTemplate
-        </Column>
-        <Column Size="ColumnSize.Three">
-        </Column>
-        <Column Size="ColumnSize.Three">
-        </Column>
-        <Column Size="ColumnSize.Three" Class="text-end">@PaginationTemplate</Column>
-        </Row>
+        <Column Size="ColumnSize.Six">@CountTemplate</Column>
+        <Column Size="ColumnSize.Six" Class="text-end">@PaginationTemplate</Column>
+    </Row>
 }
 @code {
     [Parameter] public IReadOnlyList<TItem>? Items { get; set; }
