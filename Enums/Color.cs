@@ -14,6 +14,7 @@ public sealed class Color : SmartEnum<Color>
     public static readonly Color White = new("white", 9);
     public static readonly Color Body = new("body", 10);
     public static readonly Color Transparent = new("transparent", 11);
+    public static readonly Color None = new("none", 12);
 
     public Color(string name, int value) : base(name, value)
     {
