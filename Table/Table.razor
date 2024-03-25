@@ -4,12 +4,12 @@
 
 @if (ShowTableMenu)
 {
-    <Row Class="mb-2 d-print-none">
+    <Row Class="g-3 mb-2 d-print-none">
         <Column Size="ColumnSize.Two">
             @SearchTemplate
         </Column>
         <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
-        </Row>
+    </Row>
 }
 @if (Items == null)
 {
