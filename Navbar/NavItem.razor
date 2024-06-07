@@ -1,6 +1,6 @@
 @using Microsoft.AspNetCore.Components.Routing
 
-<li class="nav-item menu-item @CssClass">
+<li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
     <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch">
         <i class="@Icon"></i>
     </NavLink>
@@ -32,4 +32,6 @@
     [Parameter] public bool ShowSubMenu { get; set; } = false;
     [Parameter] public bool MobileMenu { get; set; } = false;
     [Parameter] public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 }
