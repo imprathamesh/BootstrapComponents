@@ -2,7 +2,10 @@
     <div class="align-self-start flex-shrink-0 d-flex align-items-center justify-content-center rounded-circle text-white" style="background-color:@BackgroundColor; width:@Size; height:@Size; font-size:calc(@Size / 2)">
         @if (string.IsNullOrEmpty(Image))
         {
-            @Title[..1]
+            if (!string.IsNullOrEmpty(Title))
+            {
+                @Title[..1]
+            }
         }
         else
         {
@@ -21,6 +24,6 @@
     [Parameter] public string? Image { get; set; }
     [Parameter] public string? Path { get; set; } = "/upload/images/";
     [Parameter] public string? Size { get; set; } = "32px";
-    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Title { get; set; } = "Avatar";
     [Parameter] public bool ShowTitle { get; set; } = true;
 }

@@ -1,13 +1,15 @@
 ﻿<li class="nav-item" role="presentation" @attributes="@AdditionalAttributes">
-    <button class="nav-link @IsActive()" id="@ID" data-bs-toggle="@IsToggle()" data-bs-target="@TargetID" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+    <button class="nav-link @IsActive()" id="@ID" data-bs-toggle="@IsToggle()" data-bs-target="@TargetID" type="button" role="tab" aria-controls="@TargetID" aria-selected="false">@Name</button>
 </li>
- @code {
+@code {
     [Parameter] public string? ID { get; set; }
     [Parameter] public string? TargetID { get; set; }
     [Parameter] public string Toggle { get; set; } = "tab";
     [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Name { get; set; } = "New Tab";
     [Parameter] public bool Vertical { get; set; } = false;
     [Parameter] public bool Active { get; set; } = false;
+
     [Parameter] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
     private string IsActive()
     {

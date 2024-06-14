@@ -1,5 +1,5 @@
 ﻿
-<ul class="nav nav-pills mb-3 @Class" role="tablist" @attributes="@AdditionalAttributes">
+<ul class="nav nav-@NavStyle() mb-3 @Class" role="tablist" @attributes="@AdditionalAttributes">
     @ChildContent
 </ul>
 <div class="tab-content" id="@TabContentID">
@@ -16,4 +16,19 @@
     [Parameter] public string TabContentID { get; set; } = "myTabContent";
     [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
+    string NavStyle()
+    {
+        if (NavType == NavType.Pill)
+        {
+            return "pills";
+        }
+        else if (NavType == NavType.Underline)
+        {
+            return "underline";
+        }
+        else
+        {
+            return "tabs";
+        }
+    }
 }
