@@ -44,6 +44,12 @@ else
                 <tbody class="table-group-divider">
                     @TableBodyTemplate
                 </tbody>
+                @if (ShowFooter)
+                {
+                    <tfoot class="table-group-divider">
+                        @TableFooterTemplate
+                    </tfoot>
+                }
             </table>
         </div>
         <div class="d-block d-sm-none mb-3">
@@ -64,7 +70,7 @@ else
                 </tbody>
                 @if (ShowFooter)
                 {
-                    <tfoot>
+                    <tfoot class="table-group-divider">
                         @TableFooterTemplate
                     </tfoot>
                 }
