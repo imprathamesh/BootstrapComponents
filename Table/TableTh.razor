@@ -1,9 +1,11 @@
-﻿<th @attributes="AdditionalAttributes" scope="col">
+﻿<th class="@TextAlign.Name @Class" @attributes="AdditionalAttributes" scope="col">
     @ChildContent
 </th>
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public TextAlign TextAlign { get; set; } = TextAlign.Start;
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
