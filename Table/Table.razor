@@ -23,9 +23,12 @@ else if (Items.Count == 0)
             <div class="d-flex flex-column gap-4">
                 <img src="img/no-data.svg" alt="no-data" class="img-fluid" />
                 <p class="text-center m-0"><strong>Sorry!</strong> No Data Available.</p>
-                <div class="text-center">
-                    <a href="@(!string.IsNullOrEmpty(CreateNewLink) ? CreateNewLink : $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}/create")" class="btn btn-primary @ButtonVisible"><i class="bi bi-plus me-2"></i>New</a>
-                </div>
+                @if (ButtonVisible)
+                {
+                    <div class="text-center">
+                        <a href="@(!string.IsNullOrEmpty(CreateNewLink) ? CreateNewLink : $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}/create")" class="btn btn-primary"><i class="bi bi-plus me-2"></i>New</a>
+                    </div>
+                }
             </div>
         </div>
     }
@@ -90,7 +93,7 @@ else
 
     [Parameter]
     public string CreateNewLink { get; set; }
-    [Parameter] public string? ButtonVisible { get; set; }
+    [Parameter] public bool ButtonVisible { get; set; } = true;
     [Parameter] public bool ShowMessage { get; set; } = true;
     [Parameter] public bool ShowTableMenu { get; set; } = true;
     [Parameter] public bool ShowFooter { get; set; } = false;
@@ -101,6 +104,7 @@ else
     [Parameter] public bool IsBackground { get; set; } = true;
     [Parameter] public bool ShowPagination { get; set; } = true;
     [Parameter] public bool MobileView { get; set; } = true;
+
     [Parameter] public RenderFragment? NullTemplate { get; set; }
     [Parameter] public RenderFragment? EmptyTemplate { get; set; }
     [Parameter] public RenderFragment? ExportTemplate { get; set; }
