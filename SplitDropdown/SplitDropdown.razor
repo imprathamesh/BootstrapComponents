@@ -1,0 +1,47 @@
+<div class="btn-group btn-group-@Size.Name">
+    @if (string.IsNullOrEmpty(Link))
+    {
+        <button type="button" class="btn btn-@Color.Name">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@Icon @IconClass me-2"></i>
+            }
+            @Title
+        </button>
+
+    }
+    else
+    {
+        <a class="btn btn-@Color.Name" href="@Link">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class="@Icon @IconClass me-2"></i>
+            }
+            @Title
+        </a>
+
+    }
+
+    <button class="btn btn-@Color.Name dropdown-toggle dropdown-toggle-split" type="button" id="@ID" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="@AutoClose.Name" @attributes="@AdditionalAttributes">
+        <i class="bi bi-three-dots-vertical"></i>
+    </button>
+
+    <ul class="dropdown-menu shadow" aria-labelledby="@ID">
+        @ChildContent
+    </ul>
+</div>
+
+@code
+{
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? ID { get; set; }
+    [Parameter] public string? IconClass { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Link { get; set; }
+    [Parameter] public AutoClose AutoClose { get; set; } = AutoClose.True;
+    [Parameter] public ButtonSize Size { get; set; } = ButtonSize.Medium;
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}
