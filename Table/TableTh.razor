@@ -1,12 +1,29 @@
-﻿<th class="@TextAlign.Name @Class" @attributes="AdditionalAttributes" scope="col">
+﻿<th @onclick="ToggleSort" role="@(!string.IsNullOrEmpty(Column) ? "button" : "none")" class="@TextAlign.Name @Class" @attributes="AdditionalAttributes" scope="col">
+    @(string.IsNullOrEmpty(Title) ? Title = Column : Title)
     @ChildContent
+
+    @if (IsSorted)
+    {
+        <i class="bi @(SortDescending ? "bi-arrow-down" : "bi-arrow-up")"></i>
+    }
 </th>
 
 @code {
-    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string? Class { get; set; }
+    [Parameter] public string Column { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? CurrentSortColumn { get; set; }
+    [Parameter] public bool SortDescending { get; set; }
     [Parameter] public TextAlign TextAlign { get; set; } = TextAlign.Start;
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    [Parameter] public EventCallback<(string column, bool descending)> OnSortChanged { get; set; }
 
+    private bool IsSorted => Column == CurrentSortColumn;
+
+    private async Task ToggleSort()
+    {
+        bool newDirection = (CurrentSortColumn == Column) ? !SortDescending : false;
+        await OnSortChanged.InvokeAsync((Column, newDirection));
+    }
 }

@@ -1,21 +1,18 @@
-﻿<div class="form-floating mb-3">
-    <input id="@("txt"+Label)" @oninput="OnTextChanged" type="text" class="form-control" value="@text" placeholder="@SetPlaceHolder()" />
+﻿<div class="form-floating">
+    <input id="@("txt"+Label)" type="@Type" class="form-control" placeholder="@SetPlaceHolder()" @bind="Text" />
     <label for="@("txt"+Label)">@Label</label>
 </div>
 @code {
     private string? text;
 
     [Parameter] public string? Text { get; set; }
+    [Parameter] public string? Type { get; set; } = "text";
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? Label { get; set; }
     [Parameter] public EventCallback<string> TextChanged { get; set; }
 
-    string SetPlaceHolder()
-    {
-        if (string.IsNullOrEmpty(Placeholder))
-            return Placeholder = Label;
-        return Placeholder;
-    }
+    string SetPlaceHolder() => string.IsNullOrEmpty(Placeholder) ? Label : Placeholder;
+
     private async Task OnTextChanged(ChangeEventArgs e)
     {
         text = e?.Value?.ToString();
