@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class ShadowSize : SmartEnum<ShadowSize>
+public sealed class ShadowSize : SmartList<ShadowSize>
 {
     public static readonly ShadowSize Small = new("sm", 1);
     public static readonly ShadowSize Medium = new("md", 2);

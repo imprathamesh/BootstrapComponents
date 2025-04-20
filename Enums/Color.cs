@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class Color : SmartEnum<Color>
+public sealed class Color : SmartList<Color>
 {
     public static readonly Color Danger = new("danger", 1);
     public static readonly Color Dark = new("dark", 2);

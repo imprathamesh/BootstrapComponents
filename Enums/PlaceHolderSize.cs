@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class PlaceHolderSize : SmartEnum<PlaceHolderSize>
+public sealed class PlaceHolderSize : SmartList<PlaceHolderSize>
 {
     public static readonly PlaceHolderSize ExtraSmall = new("xl", 1);
     public static readonly PlaceHolderSize Small = new("sm", 2);

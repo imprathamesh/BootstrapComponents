@@ -1,6 +1,5 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
-public sealed class TextAlign : SmartEnum<TextAlign>
+﻿namespace BootstrapComponents.Enums;
+public sealed class TextAlign : SmartList<TextAlign>
 {
     public static readonly TextAlign Start = new("text-start", 1);
     public static readonly TextAlign Center = new("text-center", 2);

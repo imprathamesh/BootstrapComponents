@@ -1,8 +1,6 @@
-﻿using Ardalis.SmartEnum;
-
-namespace BootstrapComponents.Enums
+﻿namespace BootstrapComponents.Enums
 {
-    public sealed class Direction : SmartEnum<Direction>
+    public sealed class Direction : SmartList<Direction>
     {
         public static readonly Direction Start = new("start", 1);
         public static readonly Direction End = new("end", 2);

@@ -1,6 +1,5 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
-public sealed class ColorOpacity : SmartEnum<ColorOpacity>
+﻿namespace BootstrapComponents.Enums;
+public sealed class ColorOpacity : SmartList<ColorOpacity>
 {
     public static readonly ColorOpacity Ten = new("10", 1);
     public static readonly ColorOpacity TwentyFive = new("25", 2);

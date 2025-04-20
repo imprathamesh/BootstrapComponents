@@ -1,6 +1,5 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
-public sealed class ModalSize : SmartEnum<ModalSize>
+﻿namespace BootstrapComponents.Enums;
+public sealed class ModalSize : SmartList<ModalSize>
 {
     public static readonly ModalSize Small = new("sm", 1);
     public static readonly ModalSize Medium = new("md", 2);

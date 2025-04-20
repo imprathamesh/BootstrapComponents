@@ -1,8 +1,6 @@
-﻿using Ardalis.SmartEnum;
+﻿namespace BootstrapComponents.Enums;
 
-namespace BootstrapComponents.Enums;
-
-public sealed class ColumnSize : SmartEnum<ColumnSize>
+public sealed class ColumnSize : SmartList<ColumnSize>
 {
     public static readonly ColumnSize One = new("1", 1);
     public static readonly ColumnSize Two = new("2", 2);

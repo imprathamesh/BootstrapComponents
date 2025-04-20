@@ -1,8 +1,6 @@
-﻿using Ardalis.SmartEnum;
+﻿namespace BootstrapComponents.Enums;
 
-namespace BootstrapComponents.Enums;
-
-public sealed class Size : SmartEnum<Size>
+public sealed class Size : SmartList<Size>
 {
     public static readonly Size ExtraSmall = new("xs", 1);
     public static readonly Size Small = new("sm", 2);

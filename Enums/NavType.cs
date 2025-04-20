@@ -1,9 +1,6 @@
-﻿
-using Ardalis.SmartEnum;
-
-namespace BootstrapComponents.Enums
+﻿namespace BootstrapComponents.Enums
 {
-    public sealed class NavType : SmartEnum<NavType>
+    public sealed class NavType : SmartList<NavType>
     {
         public static readonly NavType Pill = new("pills", 1);
         public static readonly NavType Tab = new("tabs", 2);

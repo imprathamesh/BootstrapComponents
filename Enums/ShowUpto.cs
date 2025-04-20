@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class ShowUpto : SmartEnum<ShowUpto>
+public sealed class ShowUpto : SmartList<ShowUpto>
 {
     public readonly static ShowUpto Show10 = new("10 Items", 10);
     public readonly static ShowUpto Show25 = new("25 Items", 25);

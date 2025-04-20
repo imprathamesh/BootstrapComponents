@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class ButtonSize : SmartEnum<ButtonSize>
+public sealed class ButtonSize : SmartList<ButtonSize>
 {
     public static readonly ButtonSize Small = new("sm", 2);
     public static readonly ButtonSize Medium = new("md", 3);

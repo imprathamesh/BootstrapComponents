@@ -1,7 +1,6 @@
-﻿using Ardalis.SmartEnum;
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
-public sealed class AutoClose : SmartEnum<AutoClose>
+public sealed class AutoClose : SmartList<AutoClose>
 {
     public static readonly AutoClose True = new("true", 1);
     public static readonly AutoClose False = new("false", 2);
