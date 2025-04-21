@@ -1,0 +1,47 @@
+<div class="d-flex align-items-center gap-3">
+    @if (Links is not null)
+    {
+        <div>Follow Us</div>
+    }
+    <div class="d-flex align-items-center gap-2">
+        @foreach (var link in Links)
+        {
+            <a class="d-flex gap-2 btn btn-outline-secondary" href="@link.Url" target="@Target" rel="noopener noreferrer">
+                <i class="@GetIconClass(link.Name) @IconSize"></i>
+                @if (ShowText)
+                {
+                    <span>@link.Name</span>
+                }
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<SocialMediaLink> Links { get; set; } = new();
+    [Parameter] public bool ShowText { get; set; } = false;
+    [Parameter] public string IconSize { get; set; } = "bi-lg";
+    [Parameter] public bool OpenInNewTab { get; set; } = true;
+
+    private string Target => OpenInNewTab ? "_blank" : "_self";
+
+    private string GetIconClass(string platform)
+    {
+        return platform.ToLower() switch
+        {
+            "facebook" => "bi bi-facebook",
+            "x" => "bi bi-twitter-x",
+            "linkedin" => "bi bi-linkedin",
+            "instagram" => "bi bi-instagram",
+            "youtube" => "bi bi-youtube",
+            "github" => "bi bi-github",
+            _ => "bi bi-globe" // default fallback
+        };
+    }
+
+    public class SocialMediaLink
+    {
+        public string Name { get; set; } // "Facebook", "X", "LinkedIn"
+        public string Url { get; set; }
+    }
+}
