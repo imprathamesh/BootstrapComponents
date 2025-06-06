@@ -1,18 +1,11 @@
-﻿<div class="progress-bar bg-@Color.Name @Class @Striped() @Animate()" role="progressbar" style="height:@(Height + "px"); width: @(ValueNow+"%");" aria-valuenow="@ValueNow" aria-valuemin="0" aria-valuemax="@ValueMax" @attributes="@AdditionalAttributes">@ChildContent</div>
+﻿<div class="progress-bar bg-@Color.Name @Class @Striped() @Animate()" style="width: @(ValueNow+"%")" @attributes="@AdditionalAttributes">@ChildContent</div>
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     /// <summary>
     /// Current value
     /// </summary>
     [Parameter] public float ValueNow { get; set; } = 50;
-    /// <summary>
-    /// Maximum value
-    /// </summary>
-    [Parameter] public float ValueMax { get; set; } = 100;
-    /// <summary>
-    /// Height of the progress bar
-    /// </summary>
-    [Parameter] public float Height { get; set; } = 16;
+    
     /// <summary>
     /// Css Class
     /// </summary>

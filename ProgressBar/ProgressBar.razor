@@ -1,4 +1,5 @@
-﻿<div class="progress @Class" style="height: @( Height + "px")">
+﻿ 
+<div class="progress @Class" role="progressbar" aria-label="Basic example" aria-valuenow="@ValueNow" aria-valuemin="@ValueMin" aria-valuemax="@ValueMax">
     @ChildContent
 </div>
 @code {
@@ -11,4 +12,16 @@
     /// Height of progress bar container
     /// </summary>
     [Parameter] public float? Height { get; set; } = 16;
+    /// <summary>
+    /// Current value
+    /// </summary>
+    [Parameter] public float ValueNow { get; set; } = 50;
+    /// <summary>
+    /// Maximum value
+    /// </summary>
+    [Parameter] public float ValueMin { get; set; } = 0;
+    /// <summary>
+    /// Maximum value
+    /// </summary>
+    [Parameter] public float ValueMax { get; set; } = 100;
 }
