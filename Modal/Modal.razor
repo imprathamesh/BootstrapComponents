@@ -1,4 +1,4 @@
-﻿<div class="modal fade" id="@ModalID" tabindex="-1" role="dialog" aria-labelledby="@TitleID" aria-hidden="true" data-bs-backdrop="static">
+﻿<div class="modal fade @CssClass" id="@ModalID" tabindex="-1" role="dialog" aria-labelledby="@TitleID" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="@Keyboard.ToString().ToLower()">
     <div class="modal-dialog modal-@Size.Name modal-dialog-centered @ToggleScrollable()" role="document">
         <div class="modal-content">
             <div class="modal-header @ToggleHeader()">
@@ -21,8 +21,10 @@
     [Parameter] public bool Scrollable { get; set; } = true;
     [Parameter] public string CancelButtonText { get; set; } = "Cancel";
     [Parameter] public string? TitleID { get; set; }
+    [Parameter] public string? CssClass { get; set; }
     [Parameter] public bool ShowFooter { get; set; } = true;
     [Parameter] public bool ShowHeader { get; set; } = true;
+    [Parameter] public bool Keyboard { get; set; } = true;
     [Parameter] public ModalSize Size { get; set; } = ModalSize.Medium;
     [Parameter] public string? Title { get; set; } = "Confirm";
     [Parameter] public RenderFragment? BodyTemplate { get; set; }
