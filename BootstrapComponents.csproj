@@ -1,10 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
 	  <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <PackageOutputPath>D:\Publish\LibraryProjects</PackageOutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+	  <Title>Bootstrap Components</Title>
+	  <Description>Bootstrap Components for less code writing</Description>
+	  <Copyright>Innovus</Copyright> 
+	  <PackageTags>Bootstrap component wrapper</PackageTags>
+	  <PackageVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</PackageVersion>
+	  <AssemblyVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</AssemblyVersion>
+	  <FileVersion>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</FileVersion>
+	  <Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</Version>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <Content Remove="Textbox\PasswordBox.razor" />
