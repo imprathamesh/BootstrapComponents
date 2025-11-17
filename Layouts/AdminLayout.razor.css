@@ -1,0 +1,39 @@
+﻿body {
+    height: 100dvh;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    /*grid-template-rows: 3rem 1fr; 3rem*/
+    grid-template-areas: 'sidebar main';
+    block-size: 100vh;
+    block-size: 100dvh;
+}
+
+nav {
+    grid-area: sidebar; 
+}
+
+/*header {
+    grid-area: header;
+    background: peachpuff;
+    padding: 1rem 1rem;
+    margin-top: .5rem;
+}*/
+
+main {
+    grid-area: main;
+    display: grid;
+    gap: 1rem;
+    grid-template-rows: auto 1fr auto;
+    min-block-size: 100%;
+}
+
+
+/*footer {
+    grid-area: footer;
+    background-color: chocolate;
+    margin-bottom: .5rem;
+}
+*/

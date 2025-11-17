@@ -1,0 +1,24 @@
+<div class="wrapper">
+    <nav id="sidebar" class="d-print-none sidebar">
+        @LeftContent
+    </nav>
+    <header>
+        @HeaderContent
+    </header>
+    <main>
+        @MainContent
+    </main>
+    @if (BottomContent is not null)
+    {
+        <footer>
+            @BottomContent
+        </footer>
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment HeaderContent { get; set; }
+    [Parameter] public RenderFragment LeftContent { get; set; }
+    [Parameter] public RenderFragment MainContent { get; set; }
+    [Parameter] public RenderFragment BottomContent { get; set; }
+}

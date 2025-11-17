@@ -1,0 +1,11 @@
+﻿
+<div class="main-wrapper">
+    <div class="header">@HeaderContent</div>
+    <div class="main">@MainContent</div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment HeaderContent { get; set; }
+    [Parameter] public RenderFragment MainContent { get; set; }
+    [Parameter] public RenderFragment FooterContent { get; set; }
+}
