@@ -1,5 +1,5 @@
-﻿<li class="breadcrumb-item @IsActive()" aria-current="@AriaCurrent">
-    <a href="@Link" class="text-decoration-none">@LinkTitle</a>
+﻿<li class="breadcrumb-item @IsActive()" aria-current="@AriaCurrent" >
+    <a href="@Link" class="text-decoration-none" @attributes="AdditionalAttributes">@LinkTitle</a>
     @ChildContent
 </li>
 
@@ -10,7 +10,7 @@
     [Parameter] public string? AriaCurrent { get; set; } = "page";
     [Parameter] public string? Link { get; set; } = "#";
     [Parameter] public string? LinkTitle { get; set; }
-
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
     public string IsActive()
     {
         if (Active == true)
