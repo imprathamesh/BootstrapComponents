@@ -1,7 +1,7 @@
 ﻿/*left navigation navleft*/
 
 .leftmenu > .menu > .menu-item {
-    color: white;
+    color: var(--text);
     position: relative;
     padding: 4px 12px;
 }
@@ -12,7 +12,7 @@
     }
 
     .leftmenu > .menu > .menu-item ::deep .menu-link {
-        color: white;
+        color: var(--text);
         padding: 12px 12px;
         display: grid;
         place-items: center;
@@ -21,25 +21,26 @@
     }
 
         .leftmenu > .menu > .menu-item ::deep .menu-link:hover {
-            background-color: rgba(255,255,255,.2);
+            background-color: rgba(var(--bs-primary-rgb),.4);
         }
+
 
     .leftmenu > .menu > .menu-item > a.nav-link > i {
         font-size: 24px;
         line-height: 24px;
-        color: white;
     }
 
     .leftmenu > .menu > .menu-item ::deep > .nav-link.active {
-        background-color: rgba(255,255,255,.2);
+        background-color: rgba(var(--bs-primary-rgb),.4);
         padding: 12px 12px;
         display: block;
         display: grid;
         place-items: center;
+        color: var(--bs-primary);
     }
 
     .leftmenu > .menu > .menu-item > .sub-menu {
-        background-color: #131313;
+        background-color: var(--bs-body-bg);
         list-style: none;
         padding: 0;
         margin: 0;
@@ -52,7 +53,7 @@
     }
 
     .leftmenu > .menu > .menu-item > .no-menu {
-        background-color: #131313;
+        background-color: var(--bs-body-bg);
         list-style: none;
         padding: 0;
         margin: 0;
@@ -65,7 +66,7 @@
 
         .leftmenu > .menu > .menu-item > .no-menu > li {
             text-align: left;
-            color: white;
+            color: var(--text);
             font-size: 14px;
             font-weight: 400;
             padding: 4px 8px;
@@ -110,9 +111,10 @@
         border-radius: 0 0 8px 0;
     }
 */
+
 /*bottom navigation navbottom*/
 .mobile-menu > ul > li.nav-item {
-    float: left;
+    float: left
 }
 
 .mobile-menu > ul > li > a.nav-link {
@@ -123,12 +125,12 @@
 
     .mobile-menu > ul > li > a.nav-link > i {
         font-size: 24px;
-        color: #808080;
+        color: var(--text);
     }
 
     .mobile-menu > ul > li > a.nav-link > span {
         font-size: 14px;
-        color: #808080;
+        color: var(--text);
         margin-top: 4px
     }
 
@@ -136,3 +138,18 @@
     .mobile-menu > ul > li > a.nav-link.active > span {
         color: var(--sidemenu);
     }
+
+
+/*Dark Theme*/
+html[data-bs-theme=dark] .leftmenu > .menu > .menu-item ::deep .menu-link:hover {
+    background-color: rgba(var(--bs-secondary-rgb),.6);
+}
+
+html[data-bs-theme=dark] .leftmenu > .menu > .menu-item ::deep > .nav-link.active {
+    background-color: rgba(var(--bs-secondary-rgb),.4);
+    color: var(--text);
+}
+
+html[data-bs-theme=dark] .mobile-menu > ul > li > a.nav-link.active > i {
+    color: var(--text);
+}

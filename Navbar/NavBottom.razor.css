@@ -1,24 +1,23 @@
 ﻿.mobile-menu {
-    background-color: #FFF;
+    background-color: var(--bs-body-bg);
     height: 72px;
     width: 100%;
     position: fixed;
     bottom: 0;
-    border-top: 1px solid #eaeaea;
+    border-top: 1px solid #808080;
     border-radius: 8px 8px 0 0;
     padding: 16px 0;
 }
 
     .mobile-menu > ul {
-        display: flex;
+        display: grid;
+        grid-template-columns:repeat(5, 1fr);
         list-style-type: none;
         list-style: none;
         padding: 0;
         margin: 0;
-        justify-content: space-around;
+        justify-items: center;
     }
-
-
 
 .bottom-space {
     height: 18px;

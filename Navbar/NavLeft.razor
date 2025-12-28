@@ -1,8 +1,8 @@
 <nav class="leftmenu" style="background-color:@BackgroundColor">
     <ul class="menu">
         <li class="logo">
-            <img alt="logo" src="@Logo" height="36" />
-        </li> 
+            <img alt="logo" src="@Logo" height="32" />
+        </li>
         @ChildContent
     </ul>
     <ul class="menu">
@@ -11,11 +11,11 @@
 </nav>
 @code
 {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public RenderFragment SettingContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? SettingContent { get; set; }
     [Parameter] public bool ShowLogo { get; set; } = true;
-    [Parameter] public string Logo { get; set; }
-    [Parameter] public string BackgroundColor { get; set; }
+    [Parameter] public string? Logo { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; } = "var(--bs-body-bg)";
 
     string IsShowLogo()
     {

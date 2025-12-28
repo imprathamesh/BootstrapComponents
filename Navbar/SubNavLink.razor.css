@@ -1,6 +1,6 @@
 ﻿.sub-menu li {
     text-align: left;
-    color: white;
+    color: var(--text);
     font-size: 14px;
     font-weight: 400;
 }
@@ -10,11 +10,9 @@
     transform: translateY(-50%);
 }
 
-
-
 .sub-menu > li ::deep .nav-link {
     text-align: left;
-    color: white;
+    color: var(--text);
     font-size: 16px;
     padding: 4px 8px;
     opacity: .8;
@@ -27,12 +25,12 @@
 }
 
 .sub-menu > li ::deep .nav-link.active {
-    background-color: #547233;
+    background-color: var(--app-primary);
     opacity: 1;
 }
 
 .sub-menu > li ::deep .nav-link:hover {
-    background-color: #547233;
+    background-color: var(--app-primary);
     opacity: 1;
 }
 

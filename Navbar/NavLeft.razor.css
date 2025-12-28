@@ -1,15 +1,15 @@
 ﻿.leftmenu {
     height: calc(100vh );
-    /*top: 64px;*/
     position: fixed;
-    left: -80px;
+    left: 0px;
     width: 80px;
     z-index: 999;
-    -webkit-animation: slide 0.5s forwards;
-    animation: slide-right 0.5s forwards;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+    /*top: 64px;*/
+    /*-webkit-animation: slide 0.5s forwards;
+    animation: slide-right 0.5s forwards;*/
 }
 
     .leftmenu > ul {
@@ -20,12 +20,13 @@
     }
 
         .leftmenu > ul > li.logo {
-            background-color: #ffffff;
+            background-color: var(--bs-body-bg);
             display: flex;
             align-items: center;
             justify-content: center;
             height: 64px;
             width: 100%;
+            border-bottom: 1px solid #808080;
         }
 
 
