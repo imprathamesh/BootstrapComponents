@@ -1,34 +1,41 @@
 @using Microsoft.AspNetCore.Components.Routing
 
-<li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
-    <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch">
-        <i class="@Icon"></i>
-    </NavLink>
-    @if (MobileMenu == false)
-    {
-        @if (ShowSubMenu == true)
+@if (Divider)
+{
+    <li class="nav-item divider"></li>
+}
+else
+{
+    <li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
+        <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch">
+            <i class="@Icon"></i>
+        </NavLink>
+        @if (MobileMenu == false)
         {
-            <ul class="sub-menu">
-                <li>@LinkTitle</li>
-                @ChildContent
-            </ul>
+            @if (ShowSubMenu == true)
+            {
+                <ul class="sub-menu">
+                    <li>@LinkTitle</li>
+                    @ChildContent
+                </ul>
+            }
+            else
+            {
+                <ul class="no-menu">
+                    <li>@LinkTitle</li>
+                </ul>
+            }
         }
-        else
-        {
-            <ul class="no-menu">
-                <li>@LinkTitle</li>
-            </ul>
-        }
-    }
-</li>
-
+    </li>
+}
 @code
 {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public string CssClass { get; set; }
-    [Parameter] public string LinkTitle { get; set; }
-    [Parameter] public string Link { get; set; }
-    [Parameter] public string Icon { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? CssClass { get; set; }
+    [Parameter] public string? LinkTitle { get; set; }
+    [Parameter] public bool Divider { get; set; } = false;
+    [Parameter] public string? Link { get; set; }
+    [Parameter] public string? Icon { get; set; }
     [Parameter] public bool ShowSubMenu { get; set; } = false;
     [Parameter] public bool MobileMenu { get; set; } = false;
     [Parameter] public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
