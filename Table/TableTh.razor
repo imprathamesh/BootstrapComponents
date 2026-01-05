@@ -10,8 +10,8 @@
 
 @code {
     [Parameter] public string? Class { get; set; }
-    [Parameter] public string Column { get; set; } = string.Empty;
-    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+    [Parameter] public string? Column { get; set; } = string.Empty;
+    [Parameter] public string? Title { get; set; } = string.Empty;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string? CurrentSortColumn { get; set; }
     [Parameter] public bool SortDescending { get; set; }
@@ -24,6 +24,6 @@
     private async Task ToggleSort()
     {
         bool newDirection = (CurrentSortColumn == Column) ? !SortDescending : false;
-        await OnSortChanged.InvokeAsync((Column, newDirection));
+        await OnSortChanged.InvokeAsync(((Column ?? string.Empty), newDirection));
     }
 }
