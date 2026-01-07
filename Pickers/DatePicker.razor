@@ -1,0 +1,108 @@
+@using System.Globalization
+
+<div class="position-relative">
+    <input class="form-control"
+           readonly
+           value="@DisplayValue"
+           @onclick="Toggle" @attributes="AdditionalAttributes" />
+
+    @if (IsOpen)
+    {
+        <div class="dropdown-menu show p-3 shadow">
+
+            <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
+                <button class="btn btn-sm btn-light" @onclick="PrevMonth">‹</button>
+                <select class="form-select form-select-sm"
+                        value="@currentMonth" @onchange="MonthChanged">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        <option value="@m">
+                            @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                        </option>
+                    }
+                </select>
+              
+                <select class="form-select form-select-sm"
+                        value="@currentYear" @onchange="YearChanged">
+
+                    @for (int y = StartYear; y <= EndYear; y++)
+                    {
+                        <option value="@y">@y</option>
+                    }
+                </select>
+                <button class="btn btn-sm btn-light" @onclick="NextMonth">›</button>
+            </div>
+
+            @BuildCalendar(CurrentMonth)
+
+            <div class="d-flex justify-content-between mt-2">
+                <button class="btn btn-sm btn-outline-primary" @onclick="SelectToday">
+                    Today
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="Clear">
+                    Clear
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@* @if (IsOpen)
+    {
+        <div class="dropdown-menu show p-3 shadow datepicker-popup">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-2 gap-1">
+                <button class="btn btn-sm btn-light" @onclick="PrevMonth">‹</button>
+
+                <select class="form-select form-select-sm"
+                        style="width:120px"
+                        @bind="CurrentMonth">
+                    @foreach (var m in Months)
+                    {
+                        <option value="@m.Value">@m.Text</option>
+                    }
+                </select>
+
+                <select class="form-select form-select-sm"
+                        style="width:90px"
+                        @bind="CurrentYear">
+                    @for (int y = MinYear; y <= MaxYear; y++)
+                    {
+                        <option value="@y">@y</option>
+                    }
+                </select>
+
+                <button class="btn btn-sm btn-light" @onclick="NextMonth">›</button>
+            </div>
+
+            <!-- Days -->
+            <div class="d-grid gap-1 text-center" style=" grid-template-columns: repeat(7, 1fr);">
+                @foreach (var d in DayHeaders)
+                {
+                    <div class="text-muted small fw-semibold">@d</div>
+                }
+
+                @foreach (var day in CalendarDays)
+                {
+                    <button class="btn btn-sm btn-primary
+                                @(day.IsCurrentMonth ? "" : "text-muted")
+                                @(day.Date == Value ? "active" : "")"
+                            disabled="@(!day.IsCurrentMonth)"
+                            @onclick="() => Select(day.Date)">
+                        @day.Date.Day
+                    </button>
+                }
+            </div>
+
+            <!-- Footer -->
+            <div class="d-flex justify-content-between mt-2">
+                <button class="btn btn-sm btn-outline-secondary" @onclick="Clear">
+                    Clear
+                </button>
+                <button class="btn btn-sm btn-primary" @onclick="Close">
+                    Done
+                </button>
+            </div>
+        </div>
+    } *@
+

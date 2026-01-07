@@ -1,0 +1,118 @@
+@using System.Globalization
+
+<div class="position-relative">
+    <input class="form-control"
+           readonly
+           value="@DisplayTime"
+           @onclick="Toggle"
+           @onkeydown="HandleKey" @attributes="AdditionalAttributes" />
+    @if (IsOpen)
+    {
+        <div class="dropdown-menu show p-3 shadow">
+
+            <div class="d-flex flex-column align-items-center">
+                <div class="d-flex justify-content-between mb-2">
+                    <strong>Select Time</strong>
+
+                </div>
+                <div class="d-flex align-items-center justify-content-between gap-2 mb-4">
+                    @*  <input class="form-control" value="@hour" />
+                    <div>:</div>
+                    <input class="form-control" value="@minute" /> *@
+                    <input type="number"
+                           class="form-control text-center"
+                          placeholder="HH"
+                           min="@(Is24Hour ? 0 : 1)"
+                           max="@(Is24Hour ? 23 : 12)"
+                           @bind="HourInput" />
+
+                    :
+                    <input type="number"
+                           class="form-control text-center"
+                          placeholder="MM"
+                           min="0"
+                           max="59"
+                           @bind="MinuteInput" />
+
+                    @if (!Is24Hour)
+                    {
+                        <div class="btn-group ms-2">
+                            <button type="button" class="btn btn-outline-primary @(IsAM ? "active" : "")"
+                                    @onclick="() => SetAmPm(true)">
+                                AM
+                            </button>
+                            <button type="button" class="btn btn-outline-primary @(!IsAM ? "active" : "")"
+                                    @onclick="() => SetAmPm(false)">
+                                PM
+                            </button>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-3">
+
+                    @if (Is24Hour)
+                    {
+                        <div class="clock-wrapper" style="@(HourInput > 0 ? "--h:" + ((HourInput - 3) * 30) + "deg" : "--h:-90deg"); @(MinuteInput > 0 ? "--m:" + ((MinuteInput - 15 + 60) % 60) * 6 + "deg" : "--m:-90deg")">
+                            <div class="clock">
+                                @if (isHourClicked)
+                                {
+                                    @for (int i = 5; i <= 60; i += 5)
+                                    {
+                                        var value = i;
+                                        <div class="number"><span @onclick="() => GetMinute(value)" class="@(value == MinuteInput ? "active" : "")">@(value == 60 ? "00" : i)</span></div>
+                                    }
+                                }
+                                else
+                                {
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        var value = i;
+                                        <div class="number"><span @onclick="() => GetHour(value)" class="@(value == HourInput ? "active" : "")">@(value == 12 ? "0" : i)</span></div>
+                                    }
+                                    @if (Is24Hour)
+                                    {
+
+                                        @for (int i = 13; i <= 24; i++)
+                                        {
+                                            var value = i;
+                                            <div class="number number-24"><span @onclick="() => GetHour(value)" class="@(value == HourInput ? "active" : "")">@(value == 24 ? "12" : i)</span></div>
+                                        }
+                                    }
+                                }
+                            </div>
+                            <div class="center"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="clock-wrapper" style="@(HourInput > 0 ? "--h:" + ((HourInput - 3) * 30) + "deg" : "--h:-90deg"); @(MinuteInput > 0 ? "--m:" + ((MinuteInput - 15 + 60) % 60) * 6 + "deg" : "--m:-90deg")">
+                            <div class="clock">
+                                @if (isHourClicked)
+                                {
+                                    @for (int i = 5; i <= 60; i += 5)
+                                    {
+                                        var value = i;
+                                        <div class="number"><span @onclick="() => GetMinute(value)" class="@(value == MinuteInput ? "active" : "")">@(value == 60 ? "00" : i)</span></div>
+                                    }
+                                }
+                                else
+                                {
+                                    @for (int i = 1; i <= 12; i++)
+                                    {
+                                        var value = i;
+                                        <div class="number"><span @onclick="() => GetHour(value)" class="@(value == HourInput ? "active" : "")">@i</span></div>
+                                    }
+                                }
+                            </div>
+                            <div class="center"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" @onclick="SetNow">Now</button>
+                <button class="btn btn-outline-danger" @onclick="Clear">Clear</button>
+            </div>
+        </div>
+    }
+</div>
