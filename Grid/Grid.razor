@@ -1,0 +1,29 @@
+<div class="d-grid @CssClass" style="grid-template-columns:@GridTemplateColumns; grid-template-rows:@GridTemplateRows; gap:@Gap; @Style" @attributes="@AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public int Columns { get; set; } = 1;
+    [Parameter] public int Rows { get; set; } = 0;
+
+    [Parameter] public string ColumnWidth { get; set; } = "1fr";
+    [Parameter] public string RowHeight { get; set; } = "auto";
+
+    [Parameter] public string Gap { get; set; } = "0.5rem";
+
+    [Parameter] public string? CssClass { get; set; }
+    [Parameter] public string? Style { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string GridTemplateColumns =>
+        $"repeat({Columns}, {ColumnWidth})";
+
+    private string GridTemplateRows =>
+        Rows > 0
+            ? $"repeat({Rows}, {RowHeight})"
+            : "auto";
+}
