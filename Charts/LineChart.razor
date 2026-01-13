@@ -1,0 +1,429 @@
+@using System.Drawing
+@typeparam TData
+
+<div class="linechart-container">
+    <div class="chart-title">@Title</div>
+    <div class="linechart">
+        <div class="chart-area">
+            <!-- Y-axis labels -->
+            <div class="y-axis">
+                <div class="y-axis-title">@YAxisTitle</div>
+                @for (int i = 0; i <= YAxisSteps; i++)
+                {
+                    var value = CalculateYAxisValue(i);
+                    <div class="y-tick">
+                        <span class="y-label">@FormatYValue(value)</span>
+                        <div class="y-line"></div>
+                    </div>
+                }
+            </div>
+
+            <!-- Chart content -->
+            <div class="chart-content">
+                <!-- Grid lines -->
+                <div class="grid-lines">
+                    @for (int i = 0; i <= YAxisSteps; i++)
+                    {
+                        <div class="grid-line horizontal" style="bottom: @((i * 100 / YAxisSteps))%"></div>
+                    }
+                    @if (ShowVerticalGridLines && DataItems.Count > 1)
+                    {
+                        @for (int i = 0; i < DataItems.Count; i++)
+                        {
+                            var position = (i * 100) / (DataItems.Count - 1);
+                            <div class="grid-line vertical" style="left: @(position)%"></div>
+                        }
+                    }
+                </div>
+
+                <!-- Line paths -->
+                <div class="lines-container">
+                    @if (DataItems.Any())
+                    {
+                        @foreach (var lineData in LineDataSets)
+                        {
+                            <svg class="line-svg" xmlns="http://www.w3.org/2000/svg">
+                                <path class="line-path"
+                                      d="@CalculateLinePath(lineData.Data)"
+                                      style="stroke: @lineData.Color; stroke-width: @LineThickness"
+                                      fill="none" />
+
+                                <!-- Data points -->
+                                @for (int i = 0; i < lineData.Data.Count; i++)
+                                {
+                                    var point = lineData.Data[i];
+                                    var x = (i * 100) / (lineData.Data.Count - 1);
+                                    var y = 100 - CalculatePointYPosition(point);
+                                    <circle class="data-point" cx="@(x)%" cy="@(y)%" r="@PointRadius"
+                                            fill="@lineData.Color"
+                                            stroke="white"
+                                            stroke-width="2"
+                                            @onclick="() => OnPointClick.InvokeAsync(point)"
+                                            @onmouseover="() => ShowTooltip(point, lineData.Label, points(x, y))"
+                                            @onmouseout="HideTooltip" />
+                                }
+
+                                <!-- Area fill -->
+                                @if (ShowAreaFill)
+                                {
+                                    <path class="area-fill"
+                                          d="@CalculateAreaPath(lineData.Data)"
+                                          style="fill: @GetAreaFillColor(lineData.Color); opacity: 0.3"
+                                          stroke="none" />
+                                }
+                            </svg>
+                        }
+
+                        <!-- X-axis labels -->
+                        <div class="x-labels">
+                            @foreach (var item in DataItems)
+                            {
+                                var index = DataItems.IndexOf(item);
+                                var position = (index * 100) / (DataItems.Count - 1);
+                                <div class="x-label" style="left: @(position)%">
+                                    @GetXLabel(item)
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="no-data">No data available</div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="x-axis-title">@XAxisTitle</div>
+    </div>
+
+    <!-- Legend -->
+    @if (ShowLegend && LineDataSets.Count > 1)
+    {
+        <div class="legend">
+            @foreach (var lineData in LineDataSets)
+            {
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: @lineData.Color"></span>
+                    <span class="legend-label">@lineData.Label</span>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Tooltip -->
+    @if (showTooltip && tooltipData != null)
+    {
+        <div class="tooltip" style="left: @tooltipLeft; top: @tooltipTop">
+            <div class="tooltip-title">@tooltipTitle</div>
+            <div class="tooltip-content">@tooltipContent</div>
+        </div>
+    }
+</div>
+
+@code {
+
+    string points(double x, double y) => x + "," + y;
+
+    [Parameter] public List<TData> Data { get; set; } = new();
+    [Parameter] public Func<TData, string> XValueSelector { get; set; }
+    [Parameter] public Func<TData, double> YValueSelector { get; set; }
+    [Parameter] public string Title { get; set; } = "Line Chart";
+    [Parameter] public string XAxisTitle { get; set; } = "X Axis";
+    [Parameter] public string YAxisTitle { get; set; } = "Y Axis";
+    [Parameter] public int YAxisSteps { get; set; } = 5;
+    [Parameter] public bool StartYAxisFromZero { get; set; } = true;
+    [Parameter] public double? CustomYMin { get; set; }
+    [Parameter] public double? CustomYMax { get; set; }
+    [Parameter] public string LineColor { get; set; } = "#4e73df";
+    [Parameter] public int LineThickness { get; set; } = 3;
+    [Parameter] public int PointRadius { get; set; } = 4;
+    [Parameter] public bool ShowAreaFill { get; set; } = false;
+    [Parameter] public bool ShowPoints { get; set; } = true;
+    [Parameter] public bool ShowVerticalGridLines { get; set; } = true;
+    [Parameter] public bool SmoothLines { get; set; } = false;
+    [Parameter] public bool ShowLegend { get; set; } = true;
+    [Parameter] public EventCallback<TData> OnPointClick { get; set; }
+    [Parameter] public string ValueFormat { get; set; } = "N2";
+
+    // For multiple lines
+    [Parameter] public List<LineDataSet<TData>> LineDataSets { get; set; } = new();
+
+    // Tooltip state
+    private bool showTooltip = false;
+    private string tooltipLeft = "0px";
+    private string tooltipTop = "0px";
+    private string tooltipTitle = "";
+    private string tooltipContent = "";
+    private TData? tooltipData;
+
+    private List<TData> DataItems => Data ?? new List<TData>();
+
+    private double MaxValue
+    {
+        get
+        {
+            if (CustomYMax.HasValue)
+                return CustomYMax.Value;
+
+            if (!DataItems.Any() && !LineDataSets.Any())
+                return 100;
+
+            var max = 0.0;
+
+            if (DataItems.Any())
+                max = DataItems.Max(YValueSelector);
+
+            if (LineDataSets.Any())
+            {
+                foreach (var dataset in LineDataSets)
+                {
+                    var datasetMax = dataset.Data.Max(dataset.YValueSelector);
+                    if (datasetMax > max)
+                        max = datasetMax;
+                }
+            }
+
+            return max > 0 ? max : YStepValue;
+        }
+    }
+
+    private double MinValue
+    {
+        get
+        {
+            if (CustomYMin.HasValue)
+                return CustomYMin.Value;
+
+            if (StartYAxisFromZero)
+                return 0;
+
+            if (!DataItems.Any() && !LineDataSets.Any())
+                return 0;
+
+            var min = 0.0;
+
+            if (DataItems.Any())
+                min = DataItems.Min(YValueSelector);
+
+            if (LineDataSets.Any())
+            {
+                min = LineDataSets[0].Data.Min(LineDataSets[0].YValueSelector);
+                foreach (var dataset in LineDataSets.Skip(1))
+                {
+                    var datasetMin = dataset.Data.Min(dataset.YValueSelector);
+                    if (datasetMin < min)
+                        min = datasetMin;
+                }
+            }
+
+            return min < 0 ? min : 0;
+        }
+    }
+
+    private double YStepValue => (MaxValue - MinValue) / YAxisSteps;
+
+    protected override void OnParametersSet()
+    {
+        // If LineDataSets is empty but Data is provided, create a default dataset
+        if (!LineDataSets.Any() && Data.Any())
+        {
+            LineDataSets = new List<LineDataSet<TData>>
+            {
+                new LineDataSet<TData>
+                {
+                    Data = Data,
+                    Label = "Data",
+                    Color = LineColor,
+                    YValueSelector = YValueSelector
+                }
+            };
+        }
+
+        if (LineDataSets.Any())
+        {
+            foreach (var dataset in LineDataSets)
+            {
+                if (dataset.YValueSelector == null && YValueSelector != null)
+                {
+                    dataset.YValueSelector = YValueSelector;
+                }
+            }
+        }
+    }
+
+    private double CalculateYAxisValue(int step)
+    {
+        return MinValue + (step * YStepValue);
+    }
+
+    private double CalculatePointYPosition(TData point)
+    {
+        if (MaxValue == MinValue) return 50;
+
+        // Find which dataset this point belongs to
+        foreach (var dataset in LineDataSets)
+        {
+            if (dataset.Data.Contains(point) && dataset.YValueSelector != null)
+            {
+                var value = dataset.YValueSelector(point);
+                return ((value - MinValue) / (MaxValue - MinValue)) * 100;
+            }
+        }
+
+        // Fallback to main YValueSelector
+        if (YValueSelector != null)
+        {
+            var value = YValueSelector(point);
+            return ((value - MinValue) / (MaxValue - MinValue)) * 100;
+        }
+
+        return 50;
+    }
+
+    private string CalculateLinePath(List<TData> dataPoints)
+    {
+        if (dataPoints.Count < 2)
+            return "";
+
+        var path = new System.Text.StringBuilder();
+
+        for (int i = 0; i < dataPoints.Count; i++)
+        {
+            var point = dataPoints[i];
+            var x = (i * 100) / (dataPoints.Count - 1);
+            var y = 100 - CalculatePointYPosition(point);
+
+            if (i == 0)
+            {
+                path.Append($"M {x}% {y}% ");
+            }
+            else
+            {
+                if (SmoothLines && i < dataPoints.Count - 1)
+                {
+                    var nextX = ((i + 1) * 100) / (dataPoints.Count - 1);
+                    var nextY = 100 - CalculatePointYPosition(dataPoints[i + 1]);
+                    var controlX1 = x;
+                    var controlY1 = y;
+                    var controlX2 = nextX;
+                    var controlY2 = nextY;
+
+                    path.Append($"C {controlX1}% {controlY1}%, {controlX2}% {controlY2}%, {nextX}% {nextY}% ");
+                }
+                else
+                {
+                    path.Append($"L {x}% {y}% ");
+                }
+            }
+        }
+
+        return path.ToString();
+    }
+
+    private string CalculateAreaPath(List<TData> dataPoints)
+    {
+        if (dataPoints.Count < 2)
+            return "";
+
+        var path = new System.Text.StringBuilder();
+
+        // Start at first point
+        var firstX = 0;
+        var firstY = 100 - CalculatePointYPosition(dataPoints[0]);
+        path.Append($"M {firstX}% {firstY}% ");
+
+        // Draw line through all points
+        for (int i = 1; i < dataPoints.Count; i++)
+        {
+            var x = (i * 100) / (dataPoints.Count - 1);
+            var y = 100 - CalculatePointYPosition(dataPoints[i]);
+            path.Append($"L {x}% {y}% ");
+        }
+
+        // Close the path to create area fill
+        var lastX = 100;
+        var lastY = 100 - CalculatePointYPosition(dataPoints[^1]);
+        path.Append($"L {lastX}% 100% L 0% 100% Z");
+
+        return path.ToString();
+    }
+
+    private string GetAreaFillColor(string lineColor)
+    {
+        return lineColor;
+    }
+
+    private string GetXLabel(TData item)
+    {
+        if (XValueSelector != null)
+            return XValueSelector(item);
+
+        // Try to get from first dataset
+        if (LineDataSets.Any())
+        {
+            var dataset = LineDataSets.First();
+            if (dataset.XValueSelector != null)
+                return dataset.XValueSelector(item);
+        }
+
+        return item?.ToString() ?? "";
+    }
+
+    private string FormatYValue(double value)
+    {
+        return value.ToString(ValueFormat);
+    }
+
+    private void ShowTooltip(TData data, string label, string position)
+    {
+        tooltipData = data;
+        tooltipTitle = label;
+
+        // Get Y value
+        double yValue = 0;
+        foreach (var dataset in LineDataSets)
+        {
+            if (dataset.Data.Contains(data) && dataset.YValueSelector != null)
+            {
+                yValue = dataset.YValueSelector(data);
+                break;
+            }
+        }
+
+        tooltipContent = $"{GetXLabel(data)}: {yValue.ToString(ValueFormat)}";
+
+        // Parse position (e.g., "50%, 30%")
+        var parts = position.Replace("%", "").Split(',');
+        if (parts.Length == 2)
+        {
+            tooltipLeft = $"calc({parts[0].Trim()}% + 20px)";
+            tooltipTop = $"calc({parts[1].Trim()}% - 40px)";
+        }
+
+        showTooltip = true;
+        StateHasChanged();
+    }
+
+    private void HideTooltip()
+    {
+        showTooltip = false;
+        StateHasChanged();
+    }
+
+    private async Task PointClicked(TData item)
+    {
+        if (OnPointClick.HasDelegate)
+        {
+            await OnPointClick.InvokeAsync(item);
+        }
+    }
+    // Supporting class for multiple lines
+    public class LineDataSet<TData>
+    {
+        public List<TData> Data { get; set; } = new();
+        public string Label { get; set; } = "Dataset";
+        public string Color { get; set; } = "#4e73df";
+        public Func<TData, string>? XValueSelector { get; set; }
+        public Func<TData, double>? YValueSelector { get; set; }
+    }
+}

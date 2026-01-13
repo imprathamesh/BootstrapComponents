@@ -1,0 +1,104 @@
+@using System.Globalization
+@typeparam TItem
+
+<div class="gantt-chart">
+    <div class="gantt-header"
+         style="grid-template-columns:var(--row-heading-size) repeat(@TotalWeeks, var(--row-column-size));">
+        <div class="gantt-header-item"></div>
+
+        @foreach (var week in Weeks)
+        {
+            <div class="gantt-header-item">
+                @GetWeekLabel(week)
+            </div>
+        }
+    </div>
+
+    <div class="gantt-body"
+         style="grid-template-columns:var(--row-heading-size) repeat(@TotalWeeks, var(--row-column-size));">
+
+        @foreach (var item in Items)
+        {
+            <div class="gantt-task-name">
+                @TaskName(item)
+            </div>
+
+            @for (var i = 0; i < TotalWeeks; i++)
+            {
+                if (i == StartWeekOffset(item))
+                {
+                    <div class="gantt-task-bar"
+                         style="grid-column: span @(WeekDuration(item)); background-color:@BarColor(item)">
+                    </div>
+
+                    i += WeekDuration(item) - 1;
+                }
+                else
+                {
+                    <div class="gantt-task"></div>
+                }
+            }
+        }
+    </div>
+</div>
+@code {
+    [Parameter] public IEnumerable<TItem> Items { get; set; } = new List<TItem>();
+
+    [Parameter] public Func<TItem, string> TaskName { get; set; } = default!;
+    [Parameter] public Func<TItem, DateTime> StartDate { get; set; } = default!;
+    [Parameter] public Func<TItem, DateTime> EndDate { get; set; } = default!;
+    [Parameter] public Func<TItem, string> BarColor { get; set; } = _ => "var(--bs-primary)";
+
+    [Parameter] public DateTime TimelineStart { get; set; }
+    [Parameter] public DateTime TimelineEnd { get; set; }
+
+    private List<DateTime> Weeks = new();
+
+    int TotalWeeks => Weeks.Count;
+
+    protected override void OnParametersSet()
+    {
+        Weeks = BuildWeeks(TimelineStart.Date, TimelineEnd.Date);
+    }
+
+    private static List<DateTime> BuildWeeks(DateTime start, DateTime end)
+    {
+        var weeks = new List<DateTime>();
+
+        var current = start.AddDays(-(int)start.DayOfWeek);
+        while (current <= end)
+        {
+            weeks.Add(current);
+            current = current.AddDays(7);
+        }
+
+        return weeks;
+    }
+
+    private int StartWeekOffset(TItem item)
+    {
+        var start = StartDate(item).Date;
+        return Weeks.FindIndex(w => start >= w && start < w.AddDays(7));
+    }
+
+    private int WeekDuration(TItem item)
+    {
+        var start = StartDate(item).Date;
+        var end = EndDate(item).Date;
+
+        var startWeek = Weeks.FindIndex(w => start >= w && start < w.AddDays(7));
+        var endWeek = Weeks.FindIndex(w => end >= w && end < w.AddDays(7));
+
+        return Math.Max(1, endWeek - startWeek + 1);
+    }
+
+    private static string GetWeekLabel(DateTime weekStart)
+    {
+        var weekEnd = weekStart.AddDays(6);
+        if (weekStart.Year != DateTime.Now.Year)
+        {
+            return $"{weekStart:dd MMM, yyyy} - {weekEnd:dd MMM, yyyy}";
+        }
+        return $"{weekStart:dd MMM} - {weekEnd:dd MMM}";
+    }
+}

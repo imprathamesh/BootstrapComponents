@@ -1,0 +1,104 @@
+﻿@using System.Globalization
+@typeparam TItem
+
+<div class="gantt-chart" style="--row-month:@((EndDate - StartDate).Days + 1)">
+    <div class="gantt-header">
+        <div class="gantt-header-item"></div>
+        @foreach (var month in GetMonths())
+        {
+            <div class="gantt-header-item" style="grid-column: span @(month.Count());">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month.Key.Month), @month.Key.Year</div>
+        }
+    </div>
+    <div class="gantt-header">
+        <div class="gantt-header-item"></div>
+        @for (var date = StartDate; date <= EndDate; date = date.AddDays(1))
+        {
+            <div class="gantt-header-item @(date.Date == DateTime.Today ? "today-highlight" : "") @(IsWeekend(date) ? "bg-secondary bg-opacity-25" : "")">
+                <div class="gantt-day-number">
+                    @date.ToString("dd", CultureInfo.InvariantCulture)
+                </div>
+
+                <div class="gantt-day-letter">
+                    @date.ToString("ddd", CultureInfo.InvariantCulture)[0]
+                </div>
+            </div>
+        }
+    </div>
+  
+    <div class="gantt-body">
+        @foreach (var item in Items)
+        {
+            <div class="gantt-task-name">@TaskName(item)</div>
+
+            @for (var i = 0; i < TotalDays; i++)
+            {
+                if (i == StartOffset(item))
+                {
+                    <div class="gantt-task-bar"
+                         style="grid-column: span @(Duration(item)); background-color:@BarColor(item)">
+                    </div>
+
+                    i += Duration(item) - 1;
+                }
+                else
+                {
+                    <div class="gantt-task"></div>
+                }
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public IEnumerable<TItem> Items { get; set; } = new List<TItem>();
+    [Parameter] public RenderFragment Header { get; set; } = default!;
+
+    [Parameter] public Func<TItem, string> TaskName { get; set; } = default!;
+    [Parameter] public Func<TItem, int> StartOffset { get; set; } = default!;
+    [Parameter] public Func<TItem, int> Duration { get; set; } = default!;
+    [Parameter] public Func<TItem, string> BarColor { get; set; } = default!;
+    [Parameter] public Func<TItem, string> Tooltip { get; set; } = default!;
+
+    [Parameter] public DateTime StartDate { get; set; } = DateTime.Now.Date;
+    [Parameter] public DateTime EndDate { get; set; } = DateTime.Now.Date;
+
+    int TotalDays => (EndDate - StartDate).Days + 1;
+
+    int TodayColumn =>
+        DateTime.Today < StartDate || DateTime.Today > EndDate
+            ? -1
+            : (DateTime.Today - StartDate).Days + 2;
+
+    private IEnumerable<IGrouping<(int Year, int Month), DateTime>> GetMonths()
+    {
+        return Enumerable.Range(0, (EndDate - StartDate).Days + 1)
+                         .Select(offset => StartDate.AddDays(offset))
+                         .GroupBy(date => (date.Year, date.Month));
+    }
+
+    private bool IsWeekend(DateTime date) => date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+    private string GetMonthLabel(DateTime date) => $"{date:MMMM}";
+    private IEnumerable<IGrouping<int, DateTime>> GetYears()
+    {
+        return Enumerable.Range(0, (EndDate - StartDate).Days + 1)
+                         .Select(offset => StartDate.AddDays(offset))
+                         .GroupBy(date => date.Year);
+    }
+    // private int GetDealStartOffset(TItem task) => (task.StartDate - startDate).Days;
+    // private int GetDealDuration(TItem task) => (task.EndDate - task.StartDate).Days + 1;
+    protected override void OnParametersSet()
+    {
+        StartDate = Normalize(StartDate);
+        EndDate = Normalize(EndDate);
+    }
+
+    private static DateTime Normalize(DateTime date)
+    {
+        return date.Kind switch
+        {
+            DateTimeKind.Utc => date.ToLocalTime().Date,
+            _ => date.Date
+        };
+    }
+}
+

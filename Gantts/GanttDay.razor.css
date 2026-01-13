@@ -2,7 +2,6 @@
     position: relative;
     grid-auto-rows: 44px;
 }
-
 .gantt-chart {
     --row-month: 90;
     --row-heading-size: 240px;

@@ -1,0 +1,189 @@
+@using System.Text.Json
+@typeparam TData
+
+<div class="barchart-container">
+    <div class="chart-title">@Title</div>
+    <div class="barchart">
+        <div class="chart-area">
+            <!-- Y-axis labels -->
+            <div class="y-axis">
+                <div class="y-axis-title">@YAxisTitle</div>
+                <div class="y-axis-steps">
+                    @for (int i = 0; i <= YAxisSteps; i++)
+                    {
+                        var value = CalculateYAxisValue(i);
+                        <div class="y-tick">
+                            <span class="y-label">@FormatYValue(value)</span>
+                            <div class="y-line"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Chart content -->
+            <div class="chart-content">
+                <!-- Grid lines -->
+                <div class="grid-lines">
+                    @for (int i = 0; i <= YAxisSteps; i++)
+                    {
+                        <div class="grid-line" style="bottom: @((i * 100 / YAxisSteps))%"></div>
+                    }
+                </div>
+
+                <!-- Bars -->
+                <div class="bars">
+                    @foreach (var item in DataItems)
+                    {
+                        var barHeight = CalculateBarHeight(item);
+                        <div class="bar-container">
+                            <div class="bar"
+                                 style="height: @(barHeight)%;
+                                                background-color: @GetBarColor(DataItems.IndexOf(item))"
+                                 @onclick="() => BarClicked(item)"
+                                 title="@GetTooltip(item)">
+                                @if (ShowValuesOnBars && barHeight > 20)
+                                {
+                                    <span class="bar-value">@FormatValue(GetYValue(item))</span>
+                                }
+                            </div>
+                            <div class="x-label">@GetXLabel(item)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="x-axis-title">@XAxisTitle</div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<TData> Data { get; set; } = new();
+    [Parameter] public Func<TData, string> XValueSelector { get; set; }
+    [Parameter] public Func<TData, double> YValueSelector { get; set; }
+    [Parameter] public string Title { get; set; } = "Bar Chart";
+    [Parameter] public string XAxisTitle { get; set; } = "X Axis";
+    [Parameter] public string YAxisTitle { get; set; } = "Y Axis";
+    [Parameter] public int YAxisSteps { get; set; } = 5;
+    [Parameter]
+    public List<string> Colors { get; set; } = new List<string>
+    {
+        "#4e73df", "#1cc88a", "#36b9cc", "#f6c23e", "#e74a3b",
+        "#5a5c69", "#6f42c1", "#fd7e14", "#20c9a6", "#e83e8c"
+    };
+    [Parameter] public EventCallback<TData> OnBarClick { get; set; }
+    [Parameter] public bool ShowValuesOnBars { get; set; } = true;
+    [Parameter] public string ValueFormat { get; set; } = "N0";
+    [Parameter] public bool StartYAxisFromZero { get; set; } = true;
+    [Parameter] public double? CustomYMin { get; set; }
+    [Parameter] public double? CustomYMax { get; set; }
+
+    private List<TData> DataItems => Data ?? new List<TData>();
+
+    private double MaxValue
+    {
+        get
+        {
+            if (CustomYMax.HasValue)
+                return CustomYMax.Value;
+
+            if (!DataItems.Any())
+                return 0;
+
+            var max = DataItems.Max(YValueSelector);
+            // Ensure max is at least YStepValue if we have data
+            return max > 0 ? max : YStepValue;
+        }
+    }
+
+    private double MinValue
+    {
+        get
+        {
+            if (CustomYMin.HasValue)
+                return CustomYMin.Value;
+
+            if (StartYAxisFromZero)
+                return 0;
+
+            if (!DataItems.Any())
+                return 0;
+
+            var min = DataItems.Min(YValueSelector);
+            return min < 0 ? min : 0;
+        }
+    }
+
+    private double YStepValue => (MaxValue - MinValue) / YAxisSteps;
+
+    protected override void OnParametersSet()
+    {
+        if (XValueSelector == null)
+            throw new ArgumentNullException(nameof(XValueSelector));
+
+        if (YValueSelector == null)
+            throw new ArgumentNullException(nameof(YValueSelector));
+    }
+
+    private double CalculateBarHeight(TData item)
+    {
+        if (MaxValue == MinValue)
+            return 50; // Default height for equal values
+
+        var value = YValueSelector(item);
+        var range = MaxValue - MinValue;
+
+        if (range == 0) return 50;
+
+        // For negative values, we need to calculate from the bottom
+        if (MinValue < 0 && value < 0)
+        {
+            // Negative values go below the zero line
+            return (Math.Abs(value) / Math.Abs(MinValue)) * 100;
+        }
+
+        return ((value - MinValue) / range) * 100;
+    }
+
+    private double CalculateYAxisValue(int step)
+    {
+        return MinValue + (step * YStepValue);
+    }
+
+    private string GetBarColor(int index)
+    {
+        return Colors[index % Colors.Count];
+    }
+
+    private string GetXLabel(TData item)
+    {
+        return XValueSelector(item);
+    }
+
+    private double GetYValue(TData item)
+    {
+        return YValueSelector(item);
+    }
+
+    private string FormatValue(double value)
+    {
+        return value.ToString(ValueFormat);
+    }
+
+    private string FormatYValue(double value)
+    {
+        return value.ToString(ValueFormat);
+    }
+
+    private string GetTooltip(TData item)
+    {
+        return $"{GetXLabel(item)}: {FormatValue(GetYValue(item))}";
+    }
+
+    private async Task BarClicked(TData item)
+    {
+        if (OnBarClick.HasDelegate)
+        {
+            await OnBarClick.InvokeAsync(item);
+        }
+    }
+}
