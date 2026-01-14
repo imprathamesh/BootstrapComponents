@@ -52,7 +52,7 @@
 
                     @if (Is24Hour)
                     {
-                        <div class="clock-wrapper" style="@(HourInput > 0 ? "--h:" + ((HourInput - 3) * 30) + "deg" : "--h:-90deg"); @(MinuteInput > 0 ? "--m:" + ((MinuteInput - 15 + 60) % 60) * 6 + "deg" : "--m:-90deg")">
+                        <div class="clock-wrapper" style="@(HourInput > 0 ? "--h:" + ((HourInput - 3) * 30) + "deg" : "--h:-90deg"); @(MinuteInput > 0 ? "--h:" + ((MinuteInput - 15 + 60) % 60) * 6 + "deg" : "--h:-90deg")">
                             <div class="clock">
                                 @if (isHourClicked)
                                 {

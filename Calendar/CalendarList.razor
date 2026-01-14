@@ -1,0 +1,130 @@
+﻿@using System.Linq.Expressions
+@typeparam TItem
+
+@if (Items == null || !Items.Any())
+{
+    <div class="text-muted">No events</div>
+}
+else
+{
+    @foreach (var group in GroupedItems)
+    {
+        <div class="card @(ResolveGroupHeader(group.Key) == "Today" ? "border-primary" : ResolveGroupHeader(group.Key) == "Yesterday" ? "border-danger" : "") mb-3">
+            <div class="card-header @(ResolveGroupHeader(group.Key) == "Today" ? "text-white bg-primary border-primary" : ResolveGroupHeader(group.Key) == "Yesterday" ? "text-white bg-danger border-danger" : "")">
+                @ResolveGroupHeader(group.Key)
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in group)
+                {
+                    <li class="list-group-item">@ItemTemplate(item)</li>
+                }
+            </ul>
+        </div>
+    }
+}
+
+@code {
+    [Parameter, EditorRequired] public IEnumerable<TItem> Items { get; set; } = new List<TItem>();
+    [Parameter, EditorRequired] public string GroupByProperty { get; set; } = default!;
+    [Parameter] public bool OrderAscending { get; set; } = true;
+
+    [Parameter, EditorRequired] public RenderFragment<TItem> ItemTemplate { get; set; } = default!;
+
+    Func<TItem, object?>? _groupSelector;
+
+    IEnumerable<IGrouping<object?, TItem>> GroupedItems => OrderAscending
+            ? Items.GroupBy(_groupSelector!).OrderBy(g => g.Key)
+            : Items.GroupBy(_groupSelector!).OrderByDescending(g => g.Key);
+
+    protected override void OnParametersSet()
+    {
+        _groupSelector ??= CreateGroupSelector(GroupByProperty);
+    }
+
+    // static Func<TItem, object?> CreateGroupSelector(string property)
+    // {
+    //     var param = Expression.Parameter(typeof(TItem), "x");
+    //     var body = Expression.PropertyOrField(param, property);
+    //     var convert = Expression.Convert(body, typeof(object));
+    //     return Expression.Lambda<Func<TItem, object?>>(convert, param).Compile();
+    // }
+    static Func<TItem, object?> CreateGroupSelector(string property)
+    {
+        var param = Expression.Parameter(typeof(TItem), "x");
+        var member = Expression.PropertyOrField(param, property);
+
+        Expression body;
+
+        // DateTime → Date only
+        if (member.Type == typeof(DateTime))
+        {
+            body = Expression.Property(member, nameof(DateTime.Date));
+        }
+        // Nullable<DateTime> → Date only
+        else if (member.Type == typeof(DateTime?))
+        {
+            var value = Expression.Property(member, "Value");
+            body = Expression.Property(value, nameof(DateTime.Date));
+        }
+        // DateOnly stays as-is
+        else if (member.Type == typeof(DateOnly))
+        {
+            body = member;
+        }
+        else
+        {
+            body = Expression.Convert(member, typeof(object));
+        }
+
+        return Expression
+            .Lambda<Func<TItem, object?>>(Expression.Convert(body, typeof(object)), param)
+            .Compile();
+    }
+    static string FormatGroupKey(object? key)
+    {
+        return key switch
+        {
+            DateTime dt => dt.ToLongDateString(),
+            DateOnly d => d.ToLongDateString(),
+            _ => key?.ToString() ?? string.Empty
+        };
+    }
+    string ResolveGroupHeader(object? key)
+    {
+        if (key is DateTime dt)
+        {
+            var date = dt.Date;
+            var today = DateTime.Today;
+
+            if (date == today.AddDays(-1))
+                return "Yesterday";
+
+            if (date == today)
+                return "Today";
+
+            if (date == today.AddDays(1))
+                return "Tomorrow";
+
+            return dt.ToLongDateString();
+        }
+
+        if (key is DateOnly d)
+        {
+            var date = d.ToDateTime(TimeOnly.MinValue).Date;
+            var today = DateTime.Today;
+
+            if (date == today.AddDays(-1))
+                return "Yesterday";
+
+            if (date == today)
+                return "Today";
+
+            if (date == today.AddDays(1))
+                return "Tomorrow";
+
+            return d.ToLongDateString();
+        }
+
+        return key?.ToString() ?? string.Empty;
+    }
+}

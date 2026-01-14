@@ -123,8 +123,9 @@ public partial class DateRangePicker
         EndDate = null;
         StartDateChanged.InvokeAsync(null);
         EndDateChanged.InvokeAsync(null);
+        Close();
     }
-
+    void Close() => IsOpen = false;
     private bool IsAllowed(DateTime d) =>
         (MinDate is null || d >= MinDate) &&
         (MaxDate is null || d <= MaxDate);
@@ -205,13 +206,16 @@ public partial class DateRangePicker
             builder.CloseElement();
         }
     };
-
+    async Task SelectToday()
+    {
+        await ApplyPreset(DateRangePreset.Today);
+    }
     private string DayClass(DateTime d, DateTime month)
     {
-        var css = "btn btn-sm w-100";
+        var css = "btn btn-sm w-100 ";
 
         if (d.Month != month.Month)
-            return css + " btn-light disabled"; // overflow disabled
+            return css + "d-none"; // overflow disabled
 
         if (StartDate == d || EndDate == d)
             return css + " btn-primary";
@@ -222,7 +226,7 @@ public partial class DateRangePicker
         if (IsInPreviewRange(d))
             return css + " btn-primary opacity-50";
 
-        return css + " btn-outline-secondary";
+        return css + " ";
     }
     private bool IsInPreviewRange(DateTime d)
     {
@@ -235,229 +239,14 @@ public partial class DateRangePicker
         return d >= StartDate && d <= HoverDate;
     }
     private static string Format(DateTime? d)
-        => d?.ToString("yyyy-MM-dd") ?? "";
+        => d.HasValue ? d.Value.ToString("dd MMM yyyy") : string.Empty;
+
+    static string SelectedDates(string startDate, string endDate)
+    {
+        if (string.IsNullOrEmpty(startDate) && string.IsNullOrEmpty(endDate))
+        {
+            return string.Empty;
+        }
+        return startDate + " - " + endDate;
+    }
 }
-
-
-
-//public partial class DateRangePicker
-//{
-//    [Parameter] public DateTime? StartDate { get; set; }
-//    [Parameter] public DateTime? EndDate { get; set; }
-//    [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
-//    [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
-
-//    [Parameter] public DateTime? MinDate { get; set; }
-//    [Parameter] public DateTime? MaxDate { get; set; }
-
-//    private bool IsOpen;
-//    private DateTime LeftMonth = DateTime.Today;
-//    private DateTime RightMonth => LeftMonth.AddMonths(1);
-
-//    private void Toggle() => IsOpen = !IsOpen;
-
-//    private async Task ApplyPreset(DateRangePreset preset)
-//    {
-//        var (start, end) = preset.GetRange();
-
-//        StartDate = Clamp(start);
-//        EndDate = Clamp(end);
-
-//        await StartDateChanged.InvokeAsync(StartDate);
-//        await EndDateChanged.InvokeAsync(EndDate);
-
-//        IsOpen = false;
-//    }
-
-//    private async Task Select(DateTime date)
-//    {
-//        if (!IsAllowed(date)) return;
-
-//        if (StartDate is null || EndDate is not null)
-//        {
-//            StartDate = date;
-//            EndDate = null;
-//            await StartDateChanged.InvokeAsync(StartDate);
-//            await EndDateChanged.InvokeAsync(null);
-//        }
-//        else if (date >= StartDate)
-//        {
-//            EndDate = date;
-//            await EndDateChanged.InvokeAsync(EndDate);
-//            IsOpen = false;
-//        }
-//        else
-//        {
-//            StartDate = date;
-//            await StartDateChanged.InvokeAsync(StartDate);
-//        }
-//    }
-
-//    private RenderFragment BuildCalendar(DateTime month) => builder =>
-//    {
-//        var seq = 0;
-//        var first = new DateTime(month.Year, month.Month, 1);
-//        var start = first.AddDays(-(int)first.DayOfWeek);
-
-//        builder.OpenElement(seq++, "div");
-//        builder.AddContent(seq++, $"<strong>{month:MMMM yyyy}</strong>");
-
-//        for (int w = 0; w < 6; w++)
-//        {
-//            builder.OpenElement(seq++, "div");
-//            builder.AddAttribute(seq++, "class", "row g-1");
-
-//            for (int d = 0; d < 7; d++)
-//            {
-//                var date = start.AddDays(w * 7 + d);
-
-//                builder.OpenElement(seq++, "div");
-//                builder.AddAttribute(seq++, "class", "col");
-
-//                builder.OpenElement(seq++, "button");
-//                builder.AddAttribute(seq++, "class", DayClass(date, month));
-//                builder.AddAttribute(seq++, "disabled", !IsAllowed(date));
-//                builder.AddAttribute(seq++, "onclick",
-//                    EventCallback.Factory.Create(this, () => Select(date)));
-//                builder.AddContent(seq++, date.Day);
-//                builder.CloseElement();
-
-//                builder.CloseElement();
-//            }
-
-//            builder.CloseElement();
-//        }
-
-//        builder.CloseElement();
-//    };
-
-//    private bool IsAllowed(DateTime d) =>
-//        (MinDate is null || d >= MinDate) &&
-//        (MaxDate is null || d <= MaxDate);
-
-//    private DateTime Clamp(DateTime d)
-//    {
-//        if (MinDate.HasValue && d < MinDate) return MinDate.Value;
-//        if (MaxDate.HasValue && d > MaxDate) return MaxDate.Value;
-//        return d;
-//    }
-
-//    private string DayClass(DateTime d, DateTime month)
-//    {
-//        var css = "btn btn-sm w-100";
-
-//        if (d.Month != month.Month) return css + " btn-light disabled";
-//        if (StartDate == d || EndDate == d) return css + " btn-primary";
-//        if (StartDate.HasValue && EndDate.HasValue && d > StartDate && d < EndDate)
-//            return css + " btn-primary opacity-50";
-
-//        return css + " btn-outline-secondary";
-//    }
-
-//    private static string Format(DateTime? d)
-//        => d?.ToString("yyyy-MM-dd") ?? "";
-//}
-
-//public partial class DateRangePicker
-//{
-//    [Parameter] public DateTime? StartDate { get; set; }
-//    [Parameter] public DateTime? EndDate { get; set; }
-//    [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
-//    [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
-
-//    private DateTime CurrentMonth = DateTime.Today;
-
-//    private static readonly string[] WeekDays =
-//        CultureInfo.CurrentCulture.DateTimeFormat
-//            .ShortestDayNames;
-
-//    private List<List<CalendarDay>> Calendar = new();
-
-//    protected override void OnInitialized()
-//        => BuildCalendar();
-
-//    private void PrevMonth()
-//    {
-//        CurrentMonth = CurrentMonth.AddMonths(-1);
-//        BuildCalendar();
-//    }
-
-//    private void NextMonth()
-//    {
-//        CurrentMonth = CurrentMonth.AddMonths(1);
-//        BuildCalendar();
-//    }
-
-//    private async Task SelectDate(DateTime date)
-//    {
-//        if (StartDate is null || EndDate is not null)
-//        {
-//            StartDate = date;
-//            EndDate = null;
-//            await StartDateChanged.InvokeAsync(StartDate);
-//            await EndDateChanged.InvokeAsync(null);
-//        }
-//        else if (date >= StartDate)
-//        {
-//            EndDate = date;
-//            await EndDateChanged.InvokeAsync(EndDate);
-//        }
-//        else
-//        {
-//            StartDate = date;
-//            await StartDateChanged.InvokeAsync(StartDate);
-//        }
-//    }
-
-//    private void BuildCalendar()
-//    {
-//        Calendar.Clear();
-
-//        var firstDay = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
-//        var start = firstDay.AddDays(-(int)firstDay.DayOfWeek);
-
-//        for (int w = 0; w < 6; w++)
-//        {
-//            var week = new List<CalendarDay>();
-
-//            for (int d = 0; d < 7; d++)
-//            {
-//                var date = start.AddDays(w * 7 + d);
-
-//                week.Add(new CalendarDay
-//                {
-//                    Date = date,
-//                    IsCurrentMonth = date.Month == CurrentMonth.Month
-//                });
-//            }
-
-//            Calendar.Add(week);
-//        }
-//    }
-
-//    private string GetDayClass(CalendarDay day)
-//    {
-//        var css = "btn btn-sm w-100";
-
-//        if (!day.IsCurrentMonth)
-//            return css + " btn-light disabled";
-
-//        if (StartDate == day.Date)
-//            return css + " btn-primary";
-
-//        if (EndDate == day.Date)
-//            return css + " btn-primary";
-
-//        if (StartDate.HasValue && EndDate.HasValue &&
-//            day.Date > StartDate && day.Date < EndDate)
-//            return css + " btn-primary opacity-50";
-
-//        return css + " btn-outline-secondary";
-//    }
-
-//    private sealed class CalendarDay
-//    {
-//        public DateTime Date { get; set; }
-//        public bool IsCurrentMonth { get; set; }
-//    }
-//}

@@ -1,126 +1,12 @@
 @using System.Globalization
-@* 
-
-<div class="card shadow-sm">
-    <div class="card-body p-2">
-
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <button class="btn btn-sm btn-outline-secondary" @onclick="PrevMonth">
-                ‹
-            </button>
-
-            <strong>@CurrentMonth.ToString("MMMM yyyy")</strong>
-
-            <button class="btn btn-sm btn-outline-secondary" @onclick="NextMonth">
-                ›
-            </button>
-        </div>
-
-        <!-- Week headers -->
-        <div class="row g-1 text-center fw-semibold small">
-            @foreach (var d in WeekDays)
-            {
-                <div class="col">@d</div>
-            }
-        </div>
-
-        <!-- Days grid -->
-        @foreach (var week in Calendar)
-        {
-            <div class="row g-1 text-center">
-                @foreach (var day in week)
-                {
-                    <div class="col">
-                        <button class="@GetDayClass(day)"
-                                disabled="@(!day.IsCurrentMonth)"
-                                @onclick="() => SelectDate(day.Date)">
-                            @day.Date.Day
-                        </button>
-                    </div>
-                }
-            </div>
-        }
-    </div>
-</div>
- *@
-@* <div class="position-relative">
-
-    <!-- Inputs -->
-    <div class="row g-2">
-        <div class="col">
-            <input class="form-control"
-                   readonly
-                   value="@Format(StartDate)"
-                   @onclick="Toggle" placeholder="Start date" />
-        </div>
-        <div class="col">
-            <input class="form-control"
-                   readonly
-                   value="@Format(EndDate)"
-                   @onclick="Toggle" placeholder="End date" />
-        </div>
-    </div>
-
-    @if (IsOpen)
-    {
-        <div class="card shadow position-absolute mt-2 z-3">
-            <div class="card-body">
-
-                <div class="row">
-                    <!-- Presets -->
-                    <div class="col-4 border-end">
-                        @foreach (var preset in DateRangePreset.List())
-                        {
-                            <button class="btn btn-sm w-100 text-start mb-1 btn-outline-secondary"
-                                    @onclick="() => ApplyPreset(preset)">
-                                @preset.Name
-                            </button>
-                        }
-                    </div>
-
-                    <!-- Calendars -->
-                    <div class="col-8">
-                        <div class="row">
-                            <div class="col">
-                                @BuildCalendar(LeftMonth)
-                            </div>
-                            <div class="col">
-                                @BuildCalendar(RightMonth)
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    }
-</div>
- *@
 
 <div class="position-relative">
 
-    <!-- Inputs -->
-    <div class="row g-2">
-        <div class="col">
-            <input class="form-control"
-                   readonly
-                   value="@Format(StartDate)"
-                   placeholder="Start date"
-                   @onclick="Toggle" @attributes="AdditionalAttributes" />
-        </div>
-        <div class="col">
-            <input class="form-control"
-                   readonly
-                   value="@Format(EndDate)"
-                   placeholder="End date"
-                   @onclick="Toggle" @attributes="AdditionalAttributes" />
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-outline-secondary" @onclick="Clear">
-                Clear
-            </button>
-        </div>
-    </div>
+    <input class="form-control"
+           readonly
+           value="@SelectedDates(Format(StartDate), Format(EndDate))"
+           placeholder="Select Date"
+           @onclick="Toggle" @attributes="AdditionalAttributes" />
 
     @if (IsOpen)
     {
@@ -143,7 +29,7 @@
 
                         <!-- Header -->
                         <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-                            <button class="btn  btn-sm btn-light" @onclick="PrevMonth">‹</button>
+                            <button class="btn  btn-sm btn-outline-secondary" @onclick="PrevMonth"><i class="bi bi chevron-left"></i></button>
                             <!-- Month dropdown -->
                             <select class="form-select form-select-sm"
                                     value="@CurrentMonth"
@@ -154,7 +40,7 @@
                                         @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
                                     </option>
                                 }
-                            </select> 
+                            </select>
                             <select class="form-select form-select-sm  "
                                     value="@CurrentYear" @onchange="YearChanged">
                                 @for (int y = StartYear; y <= EndYear; y++)
@@ -163,7 +49,7 @@
                                 }
                             </select>
 
-                            <button class="btn btn-sm btn-light" @onclick="NextMonth">›</button>
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="NextMonth"><i class="bi bi chevron-right"></i></button>
                         </div>
 
                         <div class="row">
@@ -178,7 +64,14 @@
                                 </div>
                             }
                         </div>
-
+                        <div class="d-flex justify-content-end mt-2">
+                            @*  <button class="btn btn-sm btn-outline-primary" @onclick="SelectToday">
+                                Today
+                            </button> *@
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="Clear">
+                                Clear
+                            </button>
+                        </div>
                     </div>
                 </div>
 

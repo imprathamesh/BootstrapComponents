@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	  <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <PackageOutputPath>D:\Publish\LibraryProjects</PackageOutputPath>
@@ -16,18 +16,16 @@
 	  <Version>$([System.DateTime]::Now.ToString("yyyy.MM.dd"))</Version>
   </PropertyGroup>
 
-
   <ItemGroup>
     <Content Remove="Textbox\PasswordBox.razor" />
   </ItemGroup>
-
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.23" />
   </ItemGroup>
 
   <ItemGroup>

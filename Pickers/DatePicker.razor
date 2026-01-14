@@ -11,7 +11,7 @@
         <div class="dropdown-menu show p-3 shadow">
 
             <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-                <button class="btn btn-sm btn-light" @onclick="PrevMonth">‹</button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="PrevMonth"><i class="bi bi chevron-left"></i></button>
                 <select class="form-select form-select-sm"
                         value="@currentMonth" @onchange="MonthChanged">
                     @for (int m = 1; m <= 12; m++)
@@ -21,7 +21,7 @@
                         </option>
                     }
                 </select>
-              
+
                 <select class="form-select form-select-sm"
                         value="@currentYear" @onchange="YearChanged">
 
@@ -30,7 +30,7 @@
                         <option value="@y">@y</option>
                     }
                 </select>
-                <button class="btn btn-sm btn-light" @onclick="NextMonth">›</button>
+                <button class="btn btn-sm btn-outline-secondary" @onclick="NextMonth"><i class="bi bi chevron-right"></i></button>
             </div>
 
             @BuildCalendar(CurrentMonth)

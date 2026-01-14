@@ -1,0 +1,132 @@
+﻿@using System.Globalization
+<div class="event-calendar-wrapper">
+    <div Class="px-2 py-3 d-flex align-items-center justify-content-between">
+        <div Size="@ColumnSize.Six">
+            <h6>
+                @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Date.Month), @Date.Year
+            </h6>
+        </div>
+        <div Class="d-flex align-item-center gap-2 justify-content-end" Size="@ColumnSize.Six">
+            <button class="btn btn-light" @onclick="() => { TodayMonth(); }">Today</button>
+            <button class="btn btn-light" @onclick="() => { GoToPreviousMonth(); }"><i class="bi bi-arrow-left"></i> </button>
+            <button class="btn btn-light" @onclick="() => { GoToNextMonth(); }"><i class="bi bi-arrow-right"></i> </button>
+        </div>
+    </div>
+    <div class="event-calendar">
+
+        @foreach (var day in DaysOfWeek)
+        {
+            <div class="fw-bold week">@day</div>
+        }
+
+        @foreach (var week in CalendarWeeks)
+        {
+            @foreach (var date in week)
+            {
+                @* var ev = Events.FirstOrDefault(e => e.Date.Date == date.Date); *@
+
+                <div class="day @(selectedDate == date ? "active" : string.Empty) @(date.Month != CurrentMonth.Month ? "text-muted" : "")">
+
+                    @if (date.Month == CurrentMonth.Month)
+                    {
+                        @date.Day
+                    }
+
+                    @if (Events != null)
+                    {
+                        @foreach (var ev in Events.Where(a => a.Date.Date == date.Date))
+                        {
+                            <div class="event" style="background:@ev.Color">
+                                <div class="text-truncate">@ev.Title</div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+@code {
+    [Parameter] public List<CalendarEvent> Events { get; set; } = new();
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+
+    List<List<DateTime>> calendarWeeks = new();
+    private DateTime selectedDate = DateTime.Today;
+
+    DateTime CurrentMonth = DateTime.Today;
+    List<List<DateTime>> CalendarWeeks = new();
+
+    static readonly string[] DaysOfWeek =
+        CultureInfo.CurrentCulture.DateTimeFormat.DayNames;
+
+    protected override void OnInitialized()
+        => BuildMonth();
+
+    void TodayMonth()
+    {
+        CurrentMonth = DateTime.Today;
+        BuildMonth();
+    }
+    void BuildMonth()
+    {
+        var first = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+        var last = first.AddMonths(1).AddDays(-1);
+
+        var start = first.AddDays(-(int)first.DayOfWeek);
+        var end = last.AddDays(6 - (int)last.DayOfWeek);
+
+        CalendarWeeks.Clear();
+        var week = new List<DateTime>();
+
+        for (var d = start; d <= end; d = d.AddDays(1))
+        {
+            week.Add(d);
+            if (d.DayOfWeek == DayOfWeek.Saturday)
+            {
+                CalendarWeeks.Add(week);
+                week = new();
+            }
+        }
+    }
+    private void GoToPreviousMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(-1);
+        BuildMonth();
+    }
+
+    private void GoToNextMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(1);
+        BuildMonth();
+    }
+    // private void UpdateCalendar()
+    // {
+    //     var firstDayOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+    //     var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+    //     // var startDate = firstDayOfMonth.AddDays(-((int)firstDayOfMonth.DayOfWeek + 6) % 7);
+    //     // var endDate = lastDayOfMonth.AddDays((int)DayOfWeek.Saturday - (int)lastDayOfMonth.DayOfWeek);
+    //     // Sunday as week start
+    //     var startDate = firstDayOfMonth.AddDays(-(int)firstDayOfMonth.DayOfWeek);
+    //     var endDate = lastDayOfMonth.AddDays(6 - (int)lastDayOfMonth.DayOfWeek);
+
+    //     calendarWeeks = new List<List<DateTime>>();
+    //     var currentWeek = new List<DateTime>();
+
+    //     for (var currentDate = startDate; currentDate <= endDate; currentDate = currentDate.AddDays(1))
+    //     {
+    //         currentWeek.Add(currentDate);
+
+    //         if (currentDate.DayOfWeek == DayOfWeek.Saturday)
+    //         {
+    //             calendarWeeks.Add(currentWeek);
+    //             currentWeek = new List<DateTime>();
+    //         }
+    //     }
+    //     StateHasChanged();
+    // }
+    DateTime RoundUp(DateTime dt, TimeSpan d)
+    {
+        return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+    }
+}

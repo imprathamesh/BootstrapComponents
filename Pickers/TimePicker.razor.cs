@@ -5,8 +5,6 @@ namespace BootstrapComponents.Pickers;
 
 public partial class TimePicker
 {
-
-
     bool isHourClicked = false;
     void GetHour(int id)
     {

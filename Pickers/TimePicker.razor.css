@@ -7,10 +7,8 @@
     position: relative;
     width: 20rem;
     height: 20rem;
-    border: 1px solid var(--bs-secondary-subtle);
+    border: var(--bs-border-width) solid var(--bs-border-color);
     border-radius: 100%;
-    background-color: lightgray;
-    font-family: roboto,sans-serif;
 }
 
     .clock-wrapper::before {
@@ -22,7 +20,7 @@
         height: .25rem;
         background-color: var(--bs-primary);
         animation: animate 4s linear infinite;
-        transform: rotate(var(--m));
+        transform: rotate(var(--h));
         transform-origin: left;
     }
 

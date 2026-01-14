@@ -1,0 +1,61 @@
+﻿<div class="event-calendar-day-view-wrapper">
+    <div Class="px-2 py-3 d-flex align-items-center justify-content-between">
+        <h6>
+            @Date.ToLongDateString()
+        </h6>
+        <div class="d-flex align-item-center gap-2 justify-content-end">
+            <button class="btn btn-light" @onclick="() => { Date = today; }">Today</button>
+            <button class="btn btn-light" @onclick="() => { previousDay(); }"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-light" @onclick="@(() => nextDay())"><i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+    <div class="event-calendar-day-view">
+        <div class="time fw-bold">Time</div>
+        <div class="schedule fw-bold">Schedule</div>
+        @if (Time.List() != null)
+        {
+            foreach (var item in Time.List().OrderBy(a => a.Value))
+            {
+                <div class="time">
+                    @item.Name
+                </div>
+                @* <h6>@Date.ToLongDateString()</h6> *@
+                <div class="schedule @(TimeOnly.FromDateTime(RoundUp(DateTime.Now, TimeSpan.FromMinutes(30))).ToString("hh:mm tt") == item.Name ? "current-time" : string.Empty)">
+                    @foreach (var ev in Events.Where(a => a.Date.ToLocalTime().Date == Date.Date && TimeOnly.FromDateTime(a.Date.ToLocalTime()).ToString("hh:mm tt") == item.Name))
+                    {
+                        <div class="event" style="background:@ev.Color">
+                            <div class="text-truncate">@ev.Title</div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<CalendarEvent> Events { get; set; } = new();
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+
+    string monthName = "";
+    DateTime endOfMonth, saturday, sunday, today = DateTime.Today;
+    int monthsAway = 0, numDummyColumn = 0, numDummyColumnEnd = 0, year, month = 0, day;
+
+    void nextDay()
+    {
+        Date = Date.AddDays(1);
+    }
+    void previousDay()
+    {
+        Date = Date.AddDays(-1);
+    }
+    void todayDate()
+    {
+        monthName = DateTime.Now.ToString("MMMM");
+        year = DateTime.Now.Year;
+    }
+    DateTime RoundUp(DateTime dt, TimeSpan d)
+    {
+        return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+    }
+}

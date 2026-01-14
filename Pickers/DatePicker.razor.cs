@@ -150,12 +150,12 @@ public partial class DatePicker
         var cls = "btn btn-sm w-100 ";
 
         if (date.Month != month.Month)
-            cls += "text-muted ";
+            cls += "d-none";
 
         if (SelectedDate == date.Date)
             cls += "btn-primary";
         else
-            cls += "btn-light";
+            cls += "";
 
         return cls;
     }

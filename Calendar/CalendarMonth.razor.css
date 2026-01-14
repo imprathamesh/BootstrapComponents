@@ -1,0 +1,39 @@
+﻿.event-calendar-wrapper {
+    width: 100%;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.event-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+}
+
+    .event-calendar .week {
+        padding: 8px;
+        box-sizing: border-box;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    .event-calendar .day {
+        padding: 8px;
+        box-sizing: border-box;
+        height: 160px;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        color: var(--bs-body-color)
+    }
+
+        .event-calendar .day:not(.disabled):hover {
+            background-color: hsl(from var(--bs-primary) h s 75%);
+        }
+
+        .event-calendar .day.active {
+            background-color: hsl(from var(--bs-primary) h s 90%);
+        }
+
+        .event-calendar .day.disabled {
+            color: #808080ff
+        }

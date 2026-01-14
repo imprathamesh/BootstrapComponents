@@ -1,0 +1,136 @@
+﻿@using System.Globalization
+
+<div class="event-calendar-week-view-wrapper">
+    <div Class="px-2 py-3 d-flex align-items-center justify-content-between">
+        <div>
+            <h6>
+                @sunday.ToLongDateString() - @saturday.ToLongDateString()
+            </h6>
+        </div>
+        <div Class="d-flex align-item-center gap-2 justify-content-end"> 
+            <button class="btn btn-light" @onclick="() => { CurrentWeek(); }">Today</button>
+            <button class="btn btn-light" @onclick="() => { previousWeek(); }"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-light" @onclick="() => { nextWeek(); }"><i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+    <div class="event-calendar-week-view">
+        <div class="time"></div>
+        @foreach (var (day, index) in DaysOfWeek.Select((d, i) => (d, i)))
+        {
+            <div class="schedule fw-bold ">@day<h6>@sunday.AddDays(index).Day/@sunday.AddDays(index).Month</h6></div>
+        }
+        @if (Time.List() != null)
+        {
+            foreach (var item in Time.List().OrderBy(a => a.Value))
+            {
+                <div class="time">@item.Name</div>
+                @if (sunday.Day < saturday.Day)
+                {
+                    @for (int day = sunday.Day; day <= saturday.Day; day++)
+                    {
+                        //var date = StartOfWeek.AddDays(day);
+
+                        <div class="schedule @(day == DateTime.Today.Day && TimeOnly.FromDateTime(RoundUp(DateTime.Now, TimeSpan.FromMinutes(30))).ToString("hh:mm tt") == item.Name ? "current-time" : string.Empty) @(day == DateTime.Today.Day ? "active" : string.Empty) ">
+
+                            @if (Events != null)
+                            {  
+                                @foreach (var ev in Events.Where(n => TimeOnly.FromDateTime(n.Date.ToLocalTime()).ToString("hh:mm tt") == item.Name && n.Date.ToLocalTime().Date == new DateTime(sunday.Year, sunday.Month, day)))
+                                {
+                                    <div class="event" style="background:@ev.Color">
+                                        <div class="text-truncate">@ev.Title</div>
+                                    </div>
+                                }                               
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    @for (int i = sunday.Day; i <= DateTime.DaysInMonth(sunday.Year, sunday.Month); i++)
+                    {
+
+                        <div class="schedule">
+                            @if (Events != null)
+                            {
+                                @foreach (var ev in Events.Where(n => n.Date.ToLocalTime().Date == new DateTime(sunday.Year, sunday.Month, i)))
+                                {
+                                    <div class="event">@ev.Title</div>
+                                }                             
+                            }
+                        </div>
+                    }
+
+                    @for (int i = 1; i <= saturday.Day; i++)
+                    {
+
+                        <div class="schedule">
+                            @if (Events != null)
+                            {
+                                @foreach (var ev in Events.Where(n => n.Date.ToLocalTime().Date == new DateTime(saturday.Year, saturday.Month, i)))
+                                {
+                                    <div class="event">@ev.Title</div>
+                                }                                
+                            }
+                        </div>
+
+                    }
+                }
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<CalendarEvent> Events { get; set; } = new();
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+
+    private DateTime today, saturday, sunday;
+
+    protected override void OnInitialized()
+    {
+        CreateWeek();
+    }
+
+    void nextWeek()
+    {
+        sunday = sunday.AddDays(7);
+        saturday = saturday.AddDays(7);
+    }
+    void previousWeek()
+    {
+        sunday = sunday.AddDays(-7);
+        saturday = saturday.AddDays(-7);
+    }
+    void CurrentWeek()
+    {
+        CreateWeek();
+    }
+
+    DateTime RoundUp(DateTime dt, TimeSpan d)
+    {
+        return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+    }
+    void CreateWeek()
+    {
+        var tempDate = DateTime.Now.AddDays(0).Date;
+        var month = tempDate.Month;
+        var year = tempDate.Year;
+
+        System.Globalization.Calendar calendar = CultureInfo.CurrentCulture.Calendar;
+
+        IEnumerable<int> daysInMonth = Enumerable.Range(1, calendar.GetDaysInMonth(year, month));
+
+        var weeks = daysInMonth.Select(day => new DateTime(year, month, day))
+         .GroupBy(d => calendar.GetWeekOfYear(d, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday))
+         .Select(g => new Tuple<DateTime, DateTime>(g.First(), g.Last()))
+         .ToList();
+
+        var w = weeks.Where(a => a.Item1 <= tempDate && a.Item2 >= tempDate).FirstOrDefault()!;
+
+        sunday = w.Item1.Date;
+        saturday = w.Item2.Date;
+    }
+     
+    static readonly string[] DaysOfWeek =
+        CultureInfo.CurrentCulture.DateTimeFormat.DayNames;
+}

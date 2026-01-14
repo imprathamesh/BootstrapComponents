@@ -1,0 +1,30 @@
+﻿.event-calendar-day-view-wrapper {
+    width: 100%;
+    background-color: var(--bs-body-bg);
+    border-radius: var(--bs-border-radius);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.event-calendar-day-view {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    width: 100%;
+}
+
+    .event-calendar-day-view .time {
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        min-height: 40px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .event-calendar-day-view .schedule {
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        min-height: 40px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+        .event-calendar-day-view .schedule.current-time {
+            border-top: 1px solid red;
+        }

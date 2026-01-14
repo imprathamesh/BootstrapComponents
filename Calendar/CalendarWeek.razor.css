@@ -1,0 +1,34 @@
+﻿.event-calendar-week-view-wrapper {
+    width: 100%;
+    background-color: var(--bs-body-bg);
+    border-radius: var(--bs-border-radius);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.event-calendar-week-view {
+    display: grid;
+    grid-template-columns: auto repeat(7,1fr);
+    width: 100%;
+}
+
+    .event-calendar-week-view .time {
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        min-height: 40px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .event-calendar-week-view .schedule {
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        min-height: 40px;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+        .event-calendar-week-view .schedule.active {
+            background-color: hsl(from var(--bs-primary) h s 90%);
+        }
+
+        .event-calendar-week-view .schedule.current-time {
+            border-top: 1px solid var(--bs-danger);
+        }
