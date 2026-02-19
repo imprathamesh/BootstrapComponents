@@ -1,0 +1,71 @@
+﻿.upload-box {
+    width: 100%;
+    height: 100%;
+    border-radius: .5rem;
+    display: block;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid var(--bg-secondary);
+    overflow: hidden;
+}
+
+/* Hide file input */
+.input-file {
+    display: none !important;
+}
+
+/* Image preview */
+.upload-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Hover overlay */
+/*.upload-box::after {*/
+/*content: "Change image";*/
+/*position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}*/
+
+/* Show overlay on hover */
+.upload-box:hover::after {
+    opacity: 1;
+}
+/* Button overlay */
+.change-btn {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.25s ease;
+    color: #fff;
+}
+
+    /* Actual button styling */
+    .change-btn::before {
+        content: "Change Image";
+        background: #fff;
+        color: #000;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+/* Show on hover */
+.upload-box:hover .change-btn {
+    opacity: 1;
+}

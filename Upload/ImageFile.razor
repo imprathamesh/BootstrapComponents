@@ -1,0 +1,72 @@
+<label class="upload-box">
+    <img src="@PreviewUrl" alt="Preview" @attributes="AdditionalAttributes">
+    <span class="change-btn"></span>
+    <InputFile accept="image/*" OnChange="HandleChange" hidden />
+</label>
+
+@if (!string.IsNullOrEmpty(Error))
+{
+    <div class="text-danger">@Error</div>
+}
+
+@code {
+    [Parameter] public EventCallback<IBrowserFile?> FileChanged { get; set; }
+    [Parameter] public IBrowserFile? File { get; set; }
+    [Parameter] public string? ImageUrl { get; set; }
+    [Parameter] public long MaxSizeInBytes { get; set; } = 2 * 1024 * 1024;
+    [Parameter] public string[] AllowedTypes { get; set; } = ["image/jpeg", "image/png", "image/webp"];
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    /* ===== OPTIONAL ERROR OUT ===== */
+    [Parameter] public EventCallback<string?> ErrorChanged { get; set; }
+
+    private string? Error;
+
+    private bool HasImage => File != null || !string.IsNullOrEmpty(ImageUrl);
+    private string PreviewUrl =>
+        File is not null
+            ? _localPreview!
+            : ImageUrl ?? Placeholder;
+
+    private string? _localPreview;
+    private const string Placeholder = "https://placehold.co/800?text=Image";
+
+    private async Task HandleChange(InputFileChangeEventArgs e)
+    {
+        File = e.File;
+
+        /* ===== TYPE VALIDATION ===== */
+        if (!AllowedTypes.Contains(File.ContentType))
+        {
+            Error = "Invalid image type";
+            await ErrorChanged.InvokeAsync(Error);
+            return;
+        }
+
+        /* ===== SIZE VALIDATION ===== */
+        if (File.Size > MaxSizeInBytes)
+        {
+            Error = $"Image must be less than {MaxSizeInBytes / 1024 / 1024} MB";
+            await ErrorChanged.InvokeAsync(Error);
+            return;
+        }
+
+
+        using var stream = File.OpenReadStream(maxAllowedSize: 5_000_000);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        var base64 = Convert.ToBase64String(ms.ToArray());
+        _localPreview = $"data:{File.ContentType};base64,{base64}";
+
+        await FileChanged.InvokeAsync(File);
+        await ErrorChanged.InvokeAsync(null);
+    }
+    private async Task RemoveImage()
+    {
+        File = null;
+        ImageUrl = null;
+        _localPreview = null;
+
+        await FileChanged.InvokeAsync(null);
+    }
+}

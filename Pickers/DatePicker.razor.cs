@@ -73,9 +73,15 @@ public partial class DatePicker
         await ValueChanged.InvokeAsync(null);
         Close();
     }
+    private bool IsAllowed(DateTime d) =>
+     (MinDate is null || d >= MinDate) &&
+     (MaxDate is null || d <= MaxDate);
 
     async Task SelectDate(DateTime date)
     {
+        if (!IsAllowed(date))
+            return;
+
         SelectedDate = date.Date;
         Value = SelectedDate;
         await ValueChanged.InvokeAsync(Value);
@@ -101,12 +107,14 @@ public partial class DatePicker
 
         /* Weekday header */
         builder.OpenElement(seq++, "div");
-        builder.AddAttribute(seq++, "class", "row g-1 text-center fw-semibold small mb-1");
+        builder.AddAttribute(seq++, "class", "d-grid gap-1 text-center fw-semibold small mb-1");
+        builder.AddAttribute(seq++, "style", "grid-template-columns:repeat(7, minmax(1rem,1fr))");
+        //builder.AddAttribute(seq++, "class", "row g-1 text-center fw-semibold small mb-1");
 
         foreach (var day in WeekDays)
         {
             builder.OpenElement(seq++, "div");
-            builder.AddAttribute(seq++, "class", "col");
+            //builder.AddAttribute(seq++, "class", "col");
             builder.AddContent(seq++, day);
             builder.CloseElement();
         }
@@ -117,19 +125,22 @@ public partial class DatePicker
         for (int w = 0; w < 6; w++)
         {
             builder.OpenElement(seq++, "div");
-            builder.AddAttribute(seq++, "class", "row g-1");
+            builder.AddAttribute(seq++, "class", "d-grid gap-1");
+            builder.AddAttribute(seq++, "style", "grid-template-columns:repeat(7, minmax(1rem,1fr))");
+            //builder.AddAttribute(seq++, "class", "row g-1");
 
             for (int d = 0; d < 7; d++)
             {
                 var date = start.AddDays(w * 7 + d);
 
                 builder.OpenElement(seq++, "div");
-                builder.AddAttribute(seq++, "class", "col");
+                //builder.AddAttribute(seq++, "class", "col");
 
                 builder.OpenElement(seq++, "button");
                 builder.AddAttribute(seq++, "type", "button");
                 builder.AddAttribute(seq++, "class", DayClass(date, month));
-                builder.AddAttribute(seq++, "disabled", date.Month != month.Month);
+                //builder.AddAttribute(seq++, "disabled", date.Month != month.Month );
+                builder.AddAttribute(seq++, "disabled", !IsAllowed(date));
                 builder.AddAttribute(seq++, "onclick",
                     EventCallback.Factory.Create(this, () => SelectDate(date)));
 
@@ -147,13 +158,13 @@ public partial class DatePicker
 
     string DayClass(DateTime date, DateTime month)
     {
-        var cls = "btn btn-sm w-100 ";
+        var cls = "btn btn-sm w-100 border-0 ";
 
         if (date.Month != month.Month)
-            cls += "d-none";
+            cls += "d-none ";
 
         if (SelectedDate == date.Date)
-            cls += "btn-primary";
+            cls += "btn-primary ";
         else
             cls += "";
 

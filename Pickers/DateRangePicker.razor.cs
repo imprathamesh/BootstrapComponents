@@ -158,31 +158,35 @@ public partial class DateRangePicker
         builder.CloseElement();
 
         /* Weekday header */
-        builder.OpenElement(seq++, "div");
-        builder.AddAttribute(seq++, "class", "row g-1 text-center fw-semibold small mb-1");
+        builder.OpenElement(seq++, "div"); 
+        builder.AddAttribute(seq++, "class", "d-grid gap-1 text-center fw-semibold small mb-1");
+        builder.AddAttribute(seq++, "style", "grid-template-columns:repeat(7, minmax(1rem,1fr))");
+        //builder.AddAttribute(seq++, "class", "row g-1 text-center fw-semibold small mb-1");
 
         foreach (var day in WeekDays)
         {
             builder.OpenElement(seq++, "div");
-            builder.AddAttribute(seq++, "class", "col");
+            //builder.AddAttribute(seq++, "class", "col");
             builder.AddContent(seq++, day);
             builder.CloseElement();
         }
 
-        builder.CloseElement(); // ✅ MISSING — closes weekday header row
+        builder.CloseElement();
 
         /* Dates grid */
         for (int w = 0; w < 6; w++)
         {
             builder.OpenElement(seq++, "div");
-            builder.AddAttribute(seq++, "class", "row g-1");
+            builder.AddAttribute(seq++, "class", "d-grid gap-1");
+            builder.AddAttribute(seq++, "style", "grid-template-columns:repeat(7, minmax(1rem,1fr))");
+            //builder.AddAttribute(seq++, "class", "row g-1");
 
             for (int d = 0; d < 7; d++)
             {
                 var date = start.AddDays(w * 7 + d);
 
                 builder.OpenElement(seq++, "div");
-                builder.AddAttribute(seq++, "class", "col");
+                //builder.AddAttribute(seq++, "class", "col");
 
                 builder.OpenElement(seq++, "button");
                 builder.AddAttribute(seq++, "class", DayClass(date, month));
@@ -212,21 +216,21 @@ public partial class DateRangePicker
     }
     private string DayClass(DateTime d, DateTime month)
     {
-        var css = "btn btn-sm w-100 ";
+        var cls = "btn btn-sm w-100 border-0 ";
 
         if (d.Month != month.Month)
-            return css + "d-none"; // overflow disabled
+            cls += "d-none "; // overflow disabled
 
         if (StartDate == d || EndDate == d)
-            return css + " btn-primary";
+            cls += "btn-primary ";
 
         if (StartDate.HasValue && EndDate.HasValue && d > StartDate && d < EndDate)
-            return css + " btn-primary opacity-50";
+            cls += "btn-primary opacity-50 ";
 
         if (IsInPreviewRange(d))
-            return css + " btn-primary opacity-50";
+            cls += "btn-primary opacity-50 ";
 
-        return css + " ";
+        return cls;
     }
     private bool IsInPreviewRange(DateTime d)
     {
