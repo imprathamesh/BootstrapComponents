@@ -1,20 +1,23 @@
 ﻿namespace BootstrapComponents.Calendar
 {
-    public record CalendarEvent(
-    DateTime Date,
-    string Title,
-    string? Subtitle = null,
-    string? Meta = null,
-    string? Color = null,
-    string? Status = null
-);
+    public class CalendarEvent
+    {
+        public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string? Title { get; set; }
+        public string? Subtitle { get; set; }
+        public string? Meta { get; set; }
+        public string? Color { get; set; } = "var(--bs-primary)";
+        public string? Status { get; set; }
+    }
 
     public enum CalendarViewType
     {
         Month,
         Week,
         Day,
-        List
+        List,
+        FourDays
     }
-
 }

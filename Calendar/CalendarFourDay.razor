@@ -1,0 +1,105 @@
+@using System.Globalization
+
+<div class="event-calendar-week-view-wrapper">
+    <div class="px-2 py-3 d-flex align-items-center justify-content-between">
+        <div>
+            <h6>
+                @startDate.ToLongDateString() - @endDate.ToLongDateString()
+            </h6>
+        </div>
+        <div class="d-flex align-item-center gap-2 justify-content-end">
+            <button class="btn btn-light" @onclick="CurrentRange">Today</button>
+            <button class="btn btn-light" @onclick="previousRange"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-light" @onclick="nextRange"><i class="bi bi-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div class="event-calendar-week-view">
+
+        <div class="time"></div>
+
+        @for (int i = 0; i < 4; i++)
+        {
+            <div class="schedule fw-bold">
+                @startDate.AddDays(i).ToString("dddd")
+                <h6>@startDate.AddDays(i).Day/@startDate.AddDays(i).Month</h6>
+            </div>
+        }
+
+        @if (Time.List() != null)
+        {
+            foreach (var item in Time.List().OrderBy(a => a.Value))
+            {
+                <div class="time">@item.Name</div>
+
+                @for (int i = 0; i < 4; i++)
+                
+                {
+                    var day = startDate.AddDays(i);
+
+                    <div class="schedule
+                                    @(day.Date == DateTime.Today &&
+                                                   TimeOnly.FromDateTime(RoundUp(DateTime.Now, TimeSpan.FromMinutes(30))).ToString("hh:mm tt") == item.Name
+                                                   ? "current-time" : "")
+                                    @(day.Date == DateTime.Today ? "active" : "")">
+
+                        @if (Events != null)
+                        {
+                            foreach (var ev in Events.Where(n =>
+                            TimeOnly.FromDateTime(n.Date.ToLocalTime()).ToString("hh:mm tt") == item.Name &&
+                            n.Date.ToLocalTime().Date == day.Date))
+                            {
+                                <div class="event" style="background:@ev.Color">
+                                    <div class="text-truncate">@ev.Title</div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public List<CalendarEvent> Events { get; set; } = new();
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+
+    private DateTime startDate;
+    private DateTime endDate;
+
+    protected override void OnInitialized()
+    {
+        CreateRange();
+    }
+
+    void nextRange()
+    {
+        startDate = startDate.AddDays(4);
+        endDate = startDate.AddDays(3);
+    }
+
+    void previousRange()
+    {
+        startDate = startDate.AddDays(-4);
+        endDate = startDate.AddDays(3);
+    }
+
+    void CurrentRange()
+    {
+        CreateRange();
+    }
+
+    void CreateRange()
+    {
+        startDate = DateTime.Today;
+        endDate = startDate.AddDays(3);
+    }
+
+    DateTime RoundUp(DateTime dt, TimeSpan d)
+    {
+        return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+    }
+}

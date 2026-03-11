@@ -1,0 +1,51 @@
+﻿.calendar-wrapper {
+    width: fit-content;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 4rem);
+    width: 100%;
+    text-align:center;
+}
+
+    .calendar .week {
+        padding: 8px;
+        aspect-ratio: 1;
+        box-sizing: border-box;
+        place-content: center;
+        border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    .calendar .day {
+        padding: 8px;
+        border-radius: 56px;
+        aspect-ratio: 1;
+        box-sizing: border-box;
+        /*border: var(--bs-border-width) solid var(--bs-border-color);*/
+        color: var(--bs-body-color);
+        place-content: center;
+    }
+
+        .calendar .day:not(.disabled):hover { 
+            border: var(--bs-border-width) solid var(--bs-primary);
+        }
+
+        .calendar .day.active {
+            background-color: hsl(from var(--bs-primary) h s 90%);
+            color: var(--bs-primary);
+            font-weight: bold;
+        }
+
+        .calendar .day.disabled {
+            color: #808080ff
+        }
+.weekend-bg {
+    background-color: #f8f9fa; /* Bootstrap light gray */
+ 
+}
+

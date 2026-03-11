@@ -1,0 +1,186 @@
+﻿@using System.Globalization
+<div class="calendar-wrapper">
+    <div Class="px-2 py-3 d-flex align-items-center justify-content-between border-bottom">
+        <div class="fw-bold">
+            @CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(CurrentMonth.Month), @CurrentMonth.Year
+        </div>
+        <div Class="d-flex align-item-center gap-2 justify-content-end">
+            <button class="btn btn-light" type="button" @onclick="() => { TodayMonth(); }">Today</button>
+            <button class="btn btn-light" type="button" @onclick="() => { GoToPreviousMonth(); }"><i class="bi bi-arrow-left"></i> </button>
+            <button class="btn btn-light" type="button" @onclick="() => { GoToNextMonth(); }"><i class="bi bi-arrow-right"></i> </button>
+        </div>
+    </div>
+    <div class="calendar">
+        @foreach (var day in DaysOfWeek)
+        {
+            <div class="fw-bold week @(HighlightWeekend && IsWeekendHeader(day) ? "weekend-bg" : "")">@day[0]</div>
+        }
+
+        @foreach (var week in CalendarWeeks)
+        {
+            @foreach (var date in week)
+            {
+                @* var ev = Events.FirstOrDefault(e => e.Date.Date == date.Date); *@
+
+                <div class="@(HighlightWeekend && IsWeekend(date) ? "weekend-bg" : "")">
+                    @* <div role="button" class="day @(date < DateTime.Today ? "disabled" : selectedDate == date ? "active" : string.Empty) @(date.Month != CurrentMonth.Month ? "text-muted" : "")" @onclick="() => HandleDateClick(date)"> *@
+                    @if (date.Month == CurrentMonth.Month)
+                    {
+                        <div role="button" class="day @(date < DateTime.Today ? "disabled" : selectedDate == date ? "active" : string.Empty) @(date.Month != CurrentMonth.Month ? "text-muted" : "")" @onclick="() => HandleDateClick(date)">
+                            @date.Day
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="day disabled">
+                        </div>
+                    }
+
+
+                    @*  @if (Events != null)
+                    {
+                        @foreach (var ev in Events.Where(a => a.Date.Date == date.Date))
+                        {
+                            <div class="event" style="background:@ev.Color">
+                                <div class="text-truncate">@ev.Title</div>
+                            </div>
+                        }
+                    } *@
+                    @* </div> *@
+                </div>
+            }
+        }
+    </div>
+</div>
+@code {
+    [Parameter] public List<CalendarEvent> Events { get; set; } = new();
+    [Parameter] public DateTime Date { get; set; } = DateTime.Today;
+    [Parameter] public bool PastDateSelection { get; set; } = false;
+    [Parameter] public EventCallback<DateTime> OnDateClicked { get; set; }
+    [Parameter] public bool StartFromMonday { get; set; } = true;
+    [Parameter] public bool HighlightWeekend { get; set; } = true;
+
+    List<List<DateTime>> calendarWeeks = new();
+    private DateTime selectedDate = DateTime.Today;
+
+    DateTime CurrentMonth = DateTime.Today;
+    List<List<DateTime>> CalendarWeeks = new();
+
+    private string[] DaysOfWeek =>
+        StartFromMonday
+            ? CultureInfo.CurrentCulture.DateTimeFormat.DayNames.Skip(1).Concat(new[]
+                { CultureInfo.CurrentCulture.DateTimeFormat.DayNames[0] }).ToArray()
+            : CultureInfo.CurrentCulture.DateTimeFormat.DayNames;
+
+    private bool IsWeekend(DateTime date)
+    {
+        return date.DayOfWeek == DayOfWeek.Saturday ||
+               date.DayOfWeek == DayOfWeek.Sunday;
+    }
+    private bool IsWeekendHeader(string dayName)
+    {
+        var culture = CultureInfo.CurrentCulture;
+
+        var saturday = culture.DateTimeFormat.GetDayName(DayOfWeek.Saturday);
+        var sunday = culture.DateTimeFormat.GetDayName(DayOfWeek.Sunday);
+
+        return dayName == saturday || dayName == sunday;
+    }
+    protected override void OnInitialized()
+        => BuildMonth();
+
+    void TodayMonth()
+    {
+        CurrentMonth = DateTime.Today;
+        selectedDate = DateTime.Today;
+        BuildMonth();
+    }
+
+    void BuildMonth()
+    {
+        var first = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+        var last = first.AddMonths(1).AddDays(-1);
+
+        int diff = StartFromMonday
+            ? ((int)first.DayOfWeek == 0 ? 6 : (int)first.DayOfWeek - 1)
+            : (int)first.DayOfWeek;
+
+        var start = first.AddDays(-diff);
+
+        int endOffset = StartFromMonday
+            ? (first.AddMonths(1).AddDays(-1).DayOfWeek == DayOfWeek.Sunday ? 6 : 6 - ((int)last.DayOfWeek - 1))
+            : 6 - (int)last.DayOfWeek;
+
+        var end = last.AddDays(endOffset);
+
+        CalendarWeeks.Clear();
+        var week = new List<DateTime>();
+
+        for (var d = start; d <= end; d = d.AddDays(1))
+        {
+            week.Add(d);
+
+            bool isWeekEnd = StartFromMonday
+                ? d.DayOfWeek == DayOfWeek.Sunday
+                : d.DayOfWeek == DayOfWeek.Saturday;
+
+            if (isWeekEnd)
+            {
+                CalendarWeeks.Add(week);
+                week = new();
+            }
+        }
+    }
+    // void BuildMonth()
+    // {
+    //     var first = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+    //     var last = first.AddMonths(1).AddDays(-1);
+
+    //     // var start = first.AddDays(-(int)first.DayOfWeek);
+    //     var end = last.AddDays(6 - (int)last.DayOfWeek);
+
+    //     CalendarWeeks.Clear();
+    //     var week = new List<DateTime>();
+
+    //     for (var d = start; d <= end; d = d.AddDays(1))
+    //     {
+    //         week.Add(d);
+    //         if (d.DayOfWeek == DayOfWeek.Saturday)
+    //         {
+    //             CalendarWeeks.Add(week);
+    //             week = new();
+    //         }
+    //     }
+    // }
+    private void GoToPreviousMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(-1);
+        // selectedDate = DateTime.MinValue;
+        BuildMonth();
+    }
+
+    private void GoToNextMonth()
+    {
+        CurrentMonth = CurrentMonth.AddMonths(1);
+        // selectedDate = DateTime.MinValue;
+        BuildMonth();
+    }
+
+    DateTime RoundUp(DateTime dt, TimeSpan d)
+    {
+        return new DateTime((dt.Ticks + d.Ticks - 1) / d.Ticks * d.Ticks, dt.Kind);
+    }
+
+    async Task HandleDateClick(DateTime date)
+    {
+        if (!PastDateSelection && date < DateTime.Today)
+            return;
+
+        selectedDate = date;
+
+        if (OnDateClicked.HasDelegate)
+        {
+            await OnDateClicked.InvokeAsync(date);
+        }
+    }
+}
