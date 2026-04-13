@@ -7,7 +7,7 @@
     <div class="dropdown-menu show p-3 shadow">
 
         <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-            <button class="btn btn-sm btn-outline-secondary" @onclick="PrevMonth"><i class="bi bi-chevron-left"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="PrevMonth"><i class="bi bi-chevron-left"></i></button>
             <select class="form-select form-select-sm"
                     value="@currentMonth" @onchange="MonthChanged">
                 @for (int m = 1; m <= 12; m++)
@@ -26,16 +26,16 @@
                     <option value="@y">@y</option>
                 }
             </select>
-            <button class="btn btn-sm btn-outline-secondary" @onclick="NextMonth"><i class="bi bi-chevron-right"></i></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="NextMonth"><i class="bi bi-chevron-right"></i></button>
         </div>
 
         @BuildCalendar(CurrentMonth)
 
         <div class="d-flex justify-content-between mt-2">
-            <button class="btn btn-sm btn-outline-primary" @onclick="SelectToday">
+            <button type="button" class="btn btn-sm btn-outline-primary" @onclick="SelectToday">
                 Today
             </button>
-            <button class="btn btn-sm btn-outline-secondary" @onclick="Clear">
+            <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="Clear">
                 Clear
             </button>
         </div>

@@ -15,7 +15,6 @@ public partial class DatePicker
     [Parameter] public DateTime? MaxDate { get; set; } = DateTime.Today.AddYears(5);
     bool IsOpen;
 
-    // ✅ Single source of truth
     DateTime CurrentMonth;
     int currentMonth;
     int currentYear;
@@ -27,6 +26,16 @@ public partial class DatePicker
         SelectedDate = Value?.Date;
         currentYear = CurrentMonth.Year;
         currentMonth = CurrentMonth.Month;
+    }
+    protected override void OnParametersSet()
+    {
+        if (Value.HasValue)
+        {
+            CurrentMonth = new DateTime(Value.Value.Year, Value.Value.Month, 1);
+            SelectedDate = Value.Value.Date;
+            currentYear = Value.Value.Year;
+            currentMonth = Value.Value.Month;
+        }
     }
     private void MonthChanged(ChangeEventArgs e)
     {

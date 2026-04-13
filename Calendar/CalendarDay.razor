@@ -4,9 +4,9 @@
             @Date.ToLongDateString()
         </h6>
         <div class="d-flex align-item-center gap-2 justify-content-end">
-            <button class="btn btn-light" @onclick="() => { Date = today; }">Today</button>
-            <button class="btn btn-light" @onclick="() => { previousDay(); }"><i class="bi bi-arrow-left"></i></button>
-            <button class="btn btn-light" @onclick="@(() => nextDay())"><i class="bi bi-arrow-right"></i></button>
+            <button type="button" class="btn btn-light" @onclick="() => { Date = today; }">Today</button>
+            <button type="button" class="btn btn-light" @onclick="() => { previousDay(); }"><i class="bi bi-arrow-left"></i></button>
+            <button type="button" class="btn btn-light" @onclick="@(() => nextDay())"><i class="bi bi-arrow-right"></i></button>
         </div>
     </div>
     <div class="event-calendar-day-view">

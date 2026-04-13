@@ -1,6 +1,6 @@
 ﻿
 <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-end">
+    <ul class="pagination justify-content-end m-0">
         @foreach (var link in links)
         {
             <PaginationItem @onclick="@(() => SelectedPageInternal(link))" Class="@(CheckItem(link))" LinkTitle="@link.Text" Icon="@link.Icon"></PaginationItem>
@@ -26,6 +26,7 @@
     /// Selected page
     /// </summary>
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
+
     List<LinkModel> links = new();
     protected override void OnParametersSet()
     {

@@ -1,4 +1,5 @@
 ﻿namespace BootstrapComponents.Pagination;
+
 public class TablePagination
 {
     public int CurrentPage { get; set; } = 1;

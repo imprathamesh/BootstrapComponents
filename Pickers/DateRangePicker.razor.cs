@@ -11,13 +11,18 @@ public partial class DateRangePicker
     [Parameter] public DateTime? EndDate { get; set; }
     [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
     [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
+    [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
 
     [Parameter] public DateTime? MinDate { get; set; } = DateTime.Today.AddYears(-50);
     [Parameter] public DateTime? MaxDate { get; set; } = DateTime.Today.AddYears(5);
 
+    [Parameter] public bool FloatingLabel { get; set; } = true;
     [Parameter] public bool TwoMonthView { get; set; } = true;
     [Parameter] public int StartYear { get; set; } = DateTime.Today.Year - 30;
     [Parameter] public int EndYear { get; set; } = DateTime.Today.Year;
+
+    [Parameter] public string Label { get; set; } = "Date";
+    [Parameter] public string PlaceHolder { get; set; } = "Date";
 
     private bool IsOpen;
     private DateTime LeftMonth = DateTime.Today;
@@ -90,6 +95,8 @@ public partial class DateRangePicker
         await StartDateChanged.InvokeAsync(StartDate);
         await EndDateChanged.InvokeAsync(EndDate);
 
+        await NotifyRangeChanged();
+
         IsOpen = false;
     }
 
@@ -101,6 +108,7 @@ public partial class DateRangePicker
         {
             StartDate = date;
             EndDate = null;
+
             await StartDateChanged.InvokeAsync(StartDate);
             await EndDateChanged.InvokeAsync(null);
         }
@@ -108,6 +116,8 @@ public partial class DateRangePicker
         {
             EndDate = date;
             await EndDateChanged.InvokeAsync(EndDate);
+            await NotifyRangeChanged();
+
             IsOpen = false;
         }
         else
@@ -117,12 +127,15 @@ public partial class DateRangePicker
         }
     }
 
-    private void Clear()
+    private async Task Clear()
     {
         StartDate = null;
         EndDate = null;
-        StartDateChanged.InvokeAsync(null);
-        EndDateChanged.InvokeAsync(null);
+
+        await StartDateChanged.InvokeAsync(null);
+        await EndDateChanged.InvokeAsync(null);
+        await NotifyRangeChanged();
+
         Close();
     }
     void Close() => IsOpen = false;
@@ -158,7 +171,7 @@ public partial class DateRangePicker
         builder.CloseElement();
 
         /* Weekday header */
-        builder.OpenElement(seq++, "div"); 
+        builder.OpenElement(seq++, "div");
         builder.AddAttribute(seq++, "class", "d-grid gap-1 text-center fw-semibold small mb-1");
         builder.AddAttribute(seq++, "style", "grid-template-columns:repeat(7, minmax(1rem,1fr))");
         //builder.AddAttribute(seq++, "class", "row g-1 text-center fw-semibold small mb-1");
@@ -252,5 +265,13 @@ public partial class DateRangePicker
             return string.Empty;
         }
         return startDate + " - " + endDate;
+    }
+    private async Task NotifyRangeChanged()
+    {
+        await DateRangeChanged.InvokeAsync(new DateRange
+        {
+            Start = StartDate,
+            End = EndDate
+        });
     }
 }

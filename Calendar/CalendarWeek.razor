@@ -7,10 +7,10 @@
                 @sunday.ToLongDateString() - @saturday.ToLongDateString()
             </h6>
         </div>
-        <div Class="d-flex align-item-center gap-2 justify-content-end"> 
-            <button class="btn btn-light" @onclick="() => { CurrentWeek(); }">Today</button>
-            <button class="btn btn-light" @onclick="() => { previousWeek(); }"><i class="bi bi-arrow-left"></i></button>
-            <button class="btn btn-light" @onclick="() => { nextWeek(); }"><i class="bi bi-arrow-right"></i></button>
+        <div Class="d-flex align-item-center gap-2 justify-content-end">
+            <button type="button" class="btn btn-light" @onclick="() => { CurrentWeek(); }">Today</button>
+            <button type="button" class="btn btn-light" @onclick="() => { previousWeek(); }"><i class="bi bi-arrow-left"></i></button>
+            <button type="button" class="btn btn-light" @onclick="() => { nextWeek(); }"><i class="bi bi-arrow-right"></i></button>
         </div>
     </div>
     <div class="event-calendar-week-view">
@@ -33,13 +33,13 @@
                         <div class="schedule @(day == DateTime.Today.Day && TimeOnly.FromDateTime(RoundUp(DateTime.Now, TimeSpan.FromMinutes(30))).ToString("hh:mm tt") == item.Name ? "current-time" : string.Empty) @(day == DateTime.Today.Day ? "active" : string.Empty) ">
 
                             @if (Events != null)
-                            {  
+                            {
                                 @foreach (var ev in Events.Where(n => TimeOnly.FromDateTime(n.Date.ToLocalTime()).ToString("hh:mm tt") == item.Name && n.Date.ToLocalTime().Date == new DateTime(sunday.Year, sunday.Month, day)))
                                 {
                                     <div class="event" style="background:@ev.Color">
                                         <div class="text-truncate">@ev.Title</div>
                                     </div>
-                                }                               
+                                }
                             }
                         </div>
                     }
@@ -55,7 +55,7 @@
                                 @foreach (var ev in Events.Where(n => n.Date.ToLocalTime().Date == new DateTime(sunday.Year, sunday.Month, i)))
                                 {
                                     <div class="event">@ev.Title</div>
-                                }                             
+                                }
                             }
                         </div>
                     }
@@ -69,7 +69,7 @@
                                 @foreach (var ev in Events.Where(n => n.Date.ToLocalTime().Date == new DateTime(saturday.Year, saturday.Month, i)))
                                 {
                                     <div class="event">@ev.Title</div>
-                                }                                
+                                }
                             }
                         </div>
 
@@ -130,7 +130,7 @@
         sunday = w.Item1.Date;
         saturday = w.Item2.Date;
     }
-     
+
     static readonly string[] DaysOfWeek =
         CultureInfo.CurrentCulture.DateTimeFormat.DayNames;
 }

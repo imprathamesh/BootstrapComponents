@@ -1,0 +1,287 @@
+﻿@using BootstrapComponents.Pagination
+@using BootstrapComponents.Table
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@inject NavigationManager NavigationManager
+<CascadingValue Value="this" IsFixed="false">
+    @* Render column definitions (hidden) so SimpleColumn children can self-register *@
+    <div style="display:none" aria-hidden="true">
+        @SimpleColumns
+    </div>
+
+    @if (ShowTableMenu)
+    {
+        <Row Class="g-3 mb-2 d-print-none">
+            <Column Size="ColumnSize.Two">
+                @* <SearchBox class="mb-2" value="@Search" SearchQueryChanged="OnSearchChanged" /> *@
+                @SearchTemplate
+            </Column>
+            <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
+        </Row>
+    }
+    @if (Items == null)
+    {
+        <TableSkeletonLoading />
+    }
+    else if (Items.Count() == 0)
+    {
+        if (ShowMessage)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="d-flex flex-column gap-4">
+                    <img src="img/no-data.svg" alt="no-data" class="img-fluid" />
+                    <p class="text-center m-0"><strong>Sorry!</strong> No Data Available.</p>
+                    @if (ButtonVisible)
+                    {
+                        <div class="text-center">
+                            <a href="@(!string.IsNullOrEmpty(CreateNewLink) ? CreateNewLink : $"/{NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}/create")" class="btn btn-primary"><i class="bi bi-plus me-2"></i>New</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="table-responsive @(ListTemplate is not null ? "d-none d-sm-block" : "")">
+            <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" @attributes="AdditionalAttributes">
+                <thead>
+                    <tr>
+                        @foreach (var column in _columns)
+                        {
+                            @* <th class="@column.HeaderClass">@column.ColumnName</th> *@
+                            @*  <th class="@column.HeaderClass"
+                        style="cursor:@(column.OnClick.HasDelegate ? "pointer" : "default")"
+                        @onclick="() => OnHeaderClick(column)">
+                        @column.ColumnName
+                    </th> *@
+                            <th class="@column.HeaderClass"
+                                style="cursor:@(column.Sortable ? "pointer" : "default")"
+                                @onclick="() => OnSort(column)">
+                                @column.ColumnName
+
+                                @if (column.Sortable && _sortColumn == column.SortKey)
+                                {
+                                    <i class="ms-1 @(_ascending ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                                }
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    @if (Items is not null)
+                    {
+                        @foreach (var item in Items)
+                        {
+                            <tr>
+                                @foreach (var column in _columns)
+                                {
+                                    @* <td class="@column.ValueClass">@column.GetValue(item)</td> *@
+                                    <td class="@column.ValueClass">
+                                        @if (column.Template is not null)
+                                        {
+                                            @column.Template(item)
+                                        }
+                                        else
+                                        {
+                                            @column.GetValue(item)
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+                @if (TableFooterTemplate is not null)
+                {
+                    <tfoot class="table-group-divider">
+                        @TableFooterTemplate
+                    </tfoot>
+                }
+            </table>
+        </div>
+        @if (ListTemplate is not null)
+        {
+            <div class="d-block d-sm-none mb-3">
+                @ListTemplate
+            </div>
+        }
+        @if (TotalCount > 0)
+        {
+            <Row>
+                <Column Size="ColumnSize.Six">
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="text-muted small">
+                            @StartItem-@EndItem of @TotalCount Total
+                        </div>
+                    </div>
+                    @* @CountTemplate *@
+                </Column>
+                <Column Size="ColumnSize.Six" Class="text-end">
+                    @if (TotalPages > 1)
+                    {
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <select class="form-select w-auto" value="@PageSize" @onchange="OnPageSizeChanged">
+                                    @foreach (var item in ShowUpto.List())
+                                    {
+                                        <option value="@item.Value">@item.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <Pagination CurrentPage="@Page" PaginationLength="@TotalPages" SelectedPage="OnPageChanged" />
+                        </div>
+                    }
+                </Column>
+            </Row>
+        }
+    }
+</CascadingValue>
+
+@code {
+    [Parameter] public string? CreateNewLink { get; set; }
+    [Parameter] public bool ButtonVisible { get; set; } = true;
+    [Parameter] public bool ShowMessage { get; set; } = true;
+    [Parameter] public bool ShowTableMenu { get; set; } = true;
+
+    [Parameter] public RenderFragment? TableFooterTemplate { get; set; }
+    [Parameter] public RenderFragment? EmptyTemplate { get; set; }
+    [Parameter] public RenderFragment? ExportTemplate { get; set; }
+    [Parameter] public RenderFragment? SearchTemplate { get; set; }
+
+    /// <summary>The data source to render rows from.</summary>
+    [Parameter, EditorRequired]
+    public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
+
+    /// <summary>Column definitions supplied as child SimpleColumn components.</summary>
+    [Parameter]
+    public bool MobileView { get; set; } = true;
+
+    [Parameter, EditorRequired]
+    public RenderFragment? SimpleColumns { get; set; }
+
+    [Parameter]
+    public RenderFragment? ListTemplate { get; set; }
+
+    [Parameter] public int Page { get; set; } = 1;
+    [Parameter] public int TotalPages { get; set; }
+    [Parameter] public int PageSize { get; set; } = ShowUpto.Show10.Value;
+    [Parameter] public int TotalCount { get; set; }
+
+    private int StartItem => TotalCount == 0 ? 0 : ((Page - 1) * PageSize) + 1;
+
+    private int EndItem => Math.Min(Page * PageSize, TotalCount);
+
+    [Parameter] public EventCallback<int> PageChanged { get; set; }
+    [Parameter] public EventCallback<int> PageSizeChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<SortDefinition> SortChanged { get; set; }
+
+
+    [Parameter] public bool IsHover { get; set; } = true;
+    [Parameter] public bool IsStriped { get; set; } = true;
+    [Parameter] public bool IsBackground { get; set; } = true;
+    [Parameter] public string? ondragOver { get; set; }
+
+    [Parameter] public string? Search { get; set; }
+    [Parameter] public EventCallback<string> SearchChanged { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string? _sortColumn;
+    private bool _ascending = true;
+
+    private readonly List<SimpleColumn<TItem>> _columns = new();
+
+    private async Task OnPageChanged(int page)
+    {
+        // Page = page;
+
+        await PageChanged.InvokeAsync(page);
+
+        // StateHasChanged();
+    }
+
+    /// <summary>Called by each SimpleColumn child to register itself.</summary>
+    internal void AddColumn(SimpleColumn<TItem> column)
+    {
+        if (!_columns.Contains(column))
+        {
+            _columns.Add(column);
+            StateHasChanged();
+        }
+    }
+    private async Task OnSort(SimpleColumn<TItem> column)
+    {
+        if (!column.Sortable)
+            return;
+
+        if (_sortColumn == column.SortKey)
+            _ascending = !_ascending;
+        else
+        {
+            _sortColumn = column.SortKey;
+            _ascending = true;
+        }
+
+        await SortChanged.InvokeAsync(new SortDefinition
+        {
+            Column = _sortColumn!,
+            Ascending = _ascending
+        });
+
+        StateHasChanged();
+    }
+    /// <summary>Called by SimpleColumn on dispose to unregister.</summary>
+    internal void RemoveColumn(SimpleColumn<TItem> column)
+    {
+        if (_columns.Remove(column))
+            StateHasChanged();
+    }
+
+    private async Task OnHeaderClick(SimpleColumn<TItem> column)
+    {
+        if (column.OnClick.HasDelegate)
+            await column.OnClick.InvokeAsync();
+
+        StateHasChanged();
+    }
+    string Hover()
+    {
+        if (IsHover)
+        {
+            return "table-hover";
+        }
+        return String.Empty;
+    }
+    string Striped()
+    {
+        if (IsStriped)
+        {
+            return "table-striped";
+        }
+        return String.Empty;
+    }
+    string Background()
+    {
+        if (IsBackground)
+        {
+            return "table-bg";
+        }
+        return String.Empty;
+    }
+
+    private async Task OnSearchChanged(string value)
+    {
+        await SearchChanged.InvokeAsync(value);
+    }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        var size = Convert.ToInt32(e.Value);
+
+        await PageSizeChanged.InvokeAsync(size);
+    }
+}

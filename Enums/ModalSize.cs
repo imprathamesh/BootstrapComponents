@@ -1,4 +1,5 @@
 ﻿namespace BootstrapComponents.Enums;
+
 public sealed class ModalSize : SmartList<ModalSize>
 {
     public static readonly ModalSize Small = new("sm", 1);

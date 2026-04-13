@@ -1,4 +1,5 @@
 ﻿namespace BootstrapComponents.Enums;
+
 public sealed class ColorOpacity : SmartList<ColorOpacity>
 {
     public static readonly ColorOpacity Ten = new("10", 1);

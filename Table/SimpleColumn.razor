@@ -1,0 +1,63 @@
+@typeparam TItem
+@implements IDisposable
+
+@* This component renders no markup of its own.
+   It only registers itself with the parent SimpleTable<TItem>
+   so the table knows which columns to display. *@
+
+@code {
+    /// <summary>The header label shown in &lt;th&gt;.</summary>
+    [Parameter]
+    public string ColumnName { get; set; } = string.Empty;
+
+    [Parameter]
+    public string HeaderClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ValueClass { get; set; } = string.Empty;
+
+    [Parameter] public bool Visible { get; set; } = true;
+    /// <summary>
+    /// A selector that extracts the cell value from a row item.
+    /// Example: Value="ctx => ctx.FirstName"
+    /// </summary>
+    [Parameter]
+    public Func<TItem, object?> Value { get; set; } = _ => null;
+
+    /// <summary>Injected by CascadingValue in SimpleTable.</summary>
+    [CascadingParameter]
+    private SimpleTable<TItem> Table { get; set; } = default!;
+
+    // NEW: Template column
+    [Parameter]
+    public RenderFragment<TItem>? Template { get; set; }
+    /// <summary>Called internally by SimpleTable to retrieve the cell value as a string.</summary>
+    // internal object? GetValue(TItem item) => Value(item);
+    // NEW
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    [Parameter] public bool Sortable { get; set; } = false;
+    [Parameter] public string? SortKey { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    internal object? GetValue(TItem item)
+    {
+        if (Template != null)
+            return Template(item);
+
+        return Value?.Invoke(item);
+    }
+
+    protected override void OnInitialized()
+    {
+        if (Table is null)
+            throw new InvalidOperationException(
+                $"{nameof(SimpleColumn<TItem>)} must be used inside a {nameof(SimpleTable<TItem>)}.");
+
+        Table.AddColumn(this);
+    }
+
+    public void Dispose() => Table?.RemoveColumn(this);
+}
