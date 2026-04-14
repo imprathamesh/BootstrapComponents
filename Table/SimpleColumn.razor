@@ -17,6 +17,11 @@
     public string ValueClass { get; set; } = string.Empty;
 
     [Parameter] public bool Visible { get; set; } = true;
+
+    internal bool IsVisible { get; set; }
+
+    internal bool DefaultVisible { get; set; }
+
     /// <summary>
     /// A selector that extracts the cell value from a row item.
     /// Example: Value="ctx => ctx.FirstName"
@@ -55,6 +60,9 @@
         if (Table is null)
             throw new InvalidOperationException(
                 $"{nameof(SimpleColumn<TItem>)} must be used inside a {nameof(SimpleTable<TItem>)}.");
+
+        DefaultVisible = Visible;
+        IsVisible = Visible;
 
         Table.AddColumn(this);
     }

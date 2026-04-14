@@ -1,53 +1,113 @@
 @using System.Timers;
 
 @implements IDisposable
-    <div class="search-wrapper">
-        <i class="bi bi-search">
-        </i>
-        <input placeholder="Search" @attributes="AdditionalAttributes" @bind="SearchQuery" @bind:event="oninput" class="form-control" role="search" aria-label="search" type="search" />
-    </div>
+<div class="search-wrapper">
+    <i class="bi bi-search">
+    </i>
+    @* <input placeholder="Search" @attributes="AdditionalAttributes" @bind="SearchQuery" @bind:event="oninput" class="form-control" role="search" aria-label="search" type="search" /> *@
+    <input placeholder="Search"
+           @attributes="AdditionalAttributes"
+           value="@SearchQuery"
+           @oninput="OnInput"
+           class="form-control"
+           type="search" />
+</div>
 
-    @code
+@code
 {
-        Timer debounceTimer;
-        string searchQuery;
-        string SearchQuery
+    Timer debounceTimer;
+    // string searchQuery;
+    // string SearchQuery
+    // {
+    //     get => searchQuery;
+    //     set
+    //     {
+    //         searchQuery = value;
+    //         debounceTimer.Stop();
+    //         debounceTimer.Start();
+    //         {
+
+    //         }
+    //     }
+    // }
+    private CancellationTokenSource _cts;
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter]
+    public int Debounce { get; set; } = 300;
+    [Parameter]
+    public string SearchQuery { get; set; }
+    [Parameter]
+    public EventCallback<string> SearchQueryChanged { get; set; }
+
+    // private async Task OnInput(ChangeEventArgs e)
+    // {
+    //     var newValue = e.Value?.ToString();
+
+    //     _cts?.Cancel();
+    //     _cts = new CancellationTokenSource();
+
+    //     try
+    //     {
+    //         await Task.Delay(Debounce, _cts.Token);
+
+    //         // Update bound value
+    //         await SearchQueryChanged.InvokeAsync(newValue);
+    //     }
+    //     catch (TaskCanceledException) { }
+    // }
+    private string lastSearch;
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        var newValue = e.Value?.ToString() ?? string.Empty;
+
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+
+        try
         {
-            get => searchQuery;
-            set
+            await Task.Delay(Debounce, _cts.Token);
+
+            // 🔴 Case 1: Below minimum length
+            if (newValue.Length < 3)
             {
-                searchQuery = value;
-                debounceTimer.Stop();
-                debounceTimer.Start();
+                // Reset only once (avoid repeated calls)
+                if (!string.IsNullOrEmpty(lastSearch))
                 {
-
+                    lastSearch = string.Empty;
+                    await SearchQueryChanged.InvokeAsync(string.Empty);
                 }
+                return;
             }
+
+            // 🟡 Case 2: Avoid duplicate calls
+            if (newValue == lastSearch)
+                return;
+
+            lastSearch = newValue;
+
+            // 🟢 Case 3: Valid search
+            await SearchQueryChanged.InvokeAsync(newValue);
         }
-
-        [Parameter(CaptureUnmatchedValues = true)]
-        public IDictionary<string, object> AdditionalAttributes { get; set; }
-        [Parameter]
-        public int Debounce { get; set; } = 300;
-
-        [Parameter]
-        public EventCallback<string> SearchQueryChanged { get; set; }
-
-
-        protected override void OnInitialized()
+        catch (TaskCanceledException)
         {
-            debounceTimer = new Timer();
-            debounceTimer.Interval = Debounce;
-            debounceTimer.AutoReset = false;
-            debounceTimer.Elapsed += Search;
+            // ignore
         }
-
-        async void Search(Object source, ElapsedEventArgs e)
-        {
-            await InvokeAsync(() => SearchQueryChanged.InvokeAsync(SearchQuery));
-
-        }
-
-        public void Dispose()
-        { debounceTimer.Dispose(); }
     }
+    protected override void OnInitialized()
+    {
+        debounceTimer = new Timer();
+        debounceTimer.Interval = Debounce;
+        debounceTimer.AutoReset = false;
+        debounceTimer.Elapsed += Search;
+    }
+
+    async void Search(Object source, ElapsedEventArgs e)
+    {
+        await InvokeAsync(() => SearchQueryChanged.InvokeAsync(SearchQuery));
+    }
+
+    public void Dispose()
+    { debounceTimer.Dispose(); }
+}

@@ -13,7 +13,29 @@
     {
         <Row Class="g-3 mb-2 d-print-none">
             <Column Size="ColumnSize.Two">
-                @* <SearchBox class="mb-2" value="@Search" SearchQueryChanged="OnSearchChanged" /> *@
+                <div class="d-flex gap-2">
+                    <SearchBox class="mb-2" value="@Search" SearchQueryChanged="OnSearchChanged" />
+                    <Dropdown AutoClose="AutoClose.Outside" Icon="bi bi-filter" Tooltip="Filter" ID="dropdownMenuLink" Class="d-inline me-1" @onclick:stopPropagation>
+                        <div class="dropdown-header">Columns</div>
+                        <a class="dropdown-item" role="button" @onclick="SelectAll">Show All</a>
+                        <a class="dropdown-item text-danger" role="button" @onclick="ResetColumns">Reset</a>
+
+                        @foreach (var col in _columns)
+                        {
+                            <li class="dropdown-item" @key="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           @bind="col.IsVisible" id="@("chk" + col.ColumnName)" name="Country">
+                                    @* <input class="form-check-input" type="checkbox" checked="@col.Visible"
+                                       @onchange="(e) => ToggleColumn(col, e)" id="@("chk" + col.ColumnName)" name="Country"> *@
+                                    <label class="form-check-label" for="@("chk" + col.ColumnName)">
+                                        @col.ColumnName
+                                    </label>
+                                </div>
+                            </li>
+                        }
+                    </Dropdown>
+                </div>
                 @SearchTemplate
             </Column>
             <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
@@ -43,11 +65,13 @@
     }
     else
     {
+
+
         <div class="table-responsive @(ListTemplate is not null ? "d-none d-sm-block" : "")">
             <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" @attributes="AdditionalAttributes">
                 <thead>
                     <tr>
-                        @foreach (var column in _columns)
+                        @foreach (var column in VisibleColumns)
                         {
                             @* <th class="@column.HeaderClass">@column.ColumnName</th> *@
                             @*  <th class="@column.HeaderClass"
@@ -74,7 +98,7 @@
                         @foreach (var item in Items)
                         {
                             <tr>
-                                @foreach (var column in _columns)
+                                @foreach (var column in VisibleColumns)
                                 {
                                     @* <td class="@column.ValueClass">@column.GetValue(item)</td> *@
                                     <td class="@column.ValueClass">
@@ -190,11 +214,34 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
+    private IEnumerable<SimpleColumn<TItem>> VisibleColumns
+    => _columns.Where(x => x.IsVisible);
+
     private string? _sortColumn;
     private bool _ascending = true;
 
     private readonly List<SimpleColumn<TItem>> _columns = new();
 
+    private void ToggleColumn(SimpleColumn<TItem> column, ChangeEventArgs e)
+    {
+        column.IsVisible = (bool)e.Value!;
+        StateHasChanged();
+    }
+    private void SelectAll()
+    {
+        foreach (var col in _columns)
+            col.IsVisible = true;
+
+        // StateHasChanged();
+        InvokeAsync(StateHasChanged);
+    }
+    private void ResetColumns()
+    {
+        foreach (var col in _columns)
+            col.IsVisible = col.DefaultVisible;  // or your default logic
+
+        StateHasChanged();
+    }
     private async Task OnPageChanged(int page)
     {
         // Page = page;
