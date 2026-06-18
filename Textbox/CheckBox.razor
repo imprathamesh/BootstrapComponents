@@ -1,0 +1,63 @@
+@inherits InputBase<bool>
+
+<div class="form-check @CssClass">
+    <input @attributes="AdditionalAttributes" id="@InputId" type="checkbox" class="@InputCssClass" checked="@CurrentValue"
+           @onchange="HandleChange"
+           disabled="@Disabled" />
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="form-check-label" for="@InputId">
+            @Label
+        </label>
+    }
+</div>
+
+@if (ShowValidationMessage)
+{
+    <ValidationMessage For="ValueExpression" />
+}
+
+@code
+{
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public bool ShowValidationMessage { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<bool> OnChange { get; set; }
+
+    protected string InputId =>
+        $"chk_{FieldIdentifier.FieldName}";
+
+    protected string InputCssClass =>
+        $"form-check-input {EditContext?.FieldCssClass(FieldIdentifier)}";
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        CurrentValue = e.Value is bool value && value;
+
+        if (OnChange.HasDelegate)
+        {
+            await OnChange.InvokeAsync(CurrentValue);
+        }
+    }
+
+    protected override bool TryParseValueFromString(
+        string? value,
+        out bool result,
+        out string? validationErrorMessage)
+    {
+        result = false;
+        validationErrorMessage = null;
+        return true;
+    }
+}

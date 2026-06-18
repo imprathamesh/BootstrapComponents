@@ -17,10 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Textbox\PasswordBox.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
@@ -29,18 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Textbox\PasswordBox.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Textbox\PasswordBox.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Accordion\Accordion.razor" />
     <None Include="Layouts\DefaultLayout.razor" />
     <None Include="Navbar\NavLeft.razor" />
-    <None Include="Textbox\PasswordBox.razor" />
   </ItemGroup>
 
 </Project>

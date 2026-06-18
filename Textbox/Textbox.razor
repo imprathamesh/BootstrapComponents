@@ -1,21 +1,99 @@
-﻿<div class="form-floating">
-    <input id="@("txt"+Label)" type="@Type" class="form-control" placeholder="@SetPlaceHolder()" @bind="Text" />
-    <label for="@("txt"+Label)">@Label</label>
-</div>
-@code {
-    private string? text;
+﻿@inherits InputBase<string?>
 
-    [Parameter] public string? Text { get; set; }
-    [Parameter] public string? Type { get; set; } = "text";
-    [Parameter] public string? Placeholder { get; set; }
-    [Parameter] public string? Label { get; set; }
-    [Parameter] public EventCallback<string> TextChanged { get; set; }
+@if (LabelPosition == LabelPosition.Floating)
+{
+    <div class="form-floating @CssClass">
+        <input @attributes="AdditionalAttributes" id="@InputId" type="@InputType" class="@InputCssClass" value="@CurrentValue" @oninput="HandleInput" @onchange="HandleChange" @onclick="HandleClick" placeholder="@PlaceholderText" />
+        <label for="@InputId">@Label</label>
+    </div>
+}
+else if (LabelPosition == LabelPosition.Top)
+{
+    <div class="@CssClass">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label for="@InputId" class="form-label">
+                @Label
+            </label>
+        }
+        <input @attributes="AdditionalAttributes" id="@InputId" type="@InputType" class="@InputCssClass" value="@CurrentValue" @oninput="HandleInput" @onchange="HandleChange" @onclick="HandleClick" placeholder="@PlaceholderText" />
+    </div>
+}
+else if (LabelPosition == LabelPosition.Left)
+{
+    <div class="row align-items-center @CssClass">
+        <div class="col-auto">
+            <label for="@InputId" class="col-form-label">
+                @Label
+            </label>
+        </div>
+        <div class="col">
+            <input @attributes="AdditionalAttributes" id="@InputId" type="@InputType" class="@InputCssClass" value="@CurrentValue" @oninput="HandleInput" @onchange="HandleChange" @onclick="HandleClick" placeholder="@PlaceholderText" />
+        </div>
+    </div>
+}
+else
+{
+    <input @attributes="AdditionalAttributes" id="@InputId" type="@InputType" class="@InputCssClass @CssClass" value="@CurrentValue" @oninput="HandleInput" @onchange="HandleChange" @onclick="HandleClick" placeholder="@PlaceholderText" />
+}
 
-    string SetPlaceHolder() => string.IsNullOrEmpty(Placeholder) ? Label : Placeholder;
 
-    private async Task OnTextChanged(ChangeEventArgs e)
-    {
-        text = e?.Value?.ToString();
-        await TextChanged.InvokeAsync(text);
-    }
+@if (ShowValidationMessage)
+{
+    <ValidationMessage For="ValueExpression" />
+}
+@if ((InputType == InputType.Password && ShowStrength) || (InputType == InputType.Password && AllowTogglePassword))
+{
+    <div class="d-flex justify-content-between align-items-center gap-3">
+        @if (InputType == InputType.Password && ShowStrength)
+        {
+            @if (Strength != PasswordStrength.None)
+            {
+                <small class="text-muted">
+                    <strong>@Strength</strong>
+                </small>
+            }
+            <div class="flex-grow-1">
+                <div class="progress" style="height:4px;">
+
+                    @switch (Strength)
+                    {
+                        case PasswordStrength.Weak:
+                            <div class="progress-bar bg-danger"
+                                 style="width:33%">
+                            </div>
+                            break;
+
+                        case PasswordStrength.Medium:
+                            <div class="progress-bar bg-warning"
+                                 style="width:66%">
+                            </div>
+                            break;
+
+                        case PasswordStrength.Strong:
+                            <div class="progress-bar bg-success"
+                                 style="width:100%">
+                            </div>
+                            break;
+                    }
+
+                </div>
+            </div>
+        }
+        @if (InputType == InputType.Password && AllowTogglePassword)
+        {
+            <div type="button" title="toggle password visible"
+                 class="btn btn-sm btn-link ms-auto"
+                 @onclick="TogglePassword">
+                @if (showPassword)
+                {
+                    <i class="bi bi-eye-slash"></i>
+                }
+                else
+                {
+                    <i class="bi bi-eye"></i>
+                }
+            </div>
+        }
+    </div>
 }

@@ -1,0 +1,49 @@
+@typeparam TValue
+@inherits InputBase<TValue>
+
+<div class="@CssClass">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@if (ShowValidationMessage)
+{
+    <ValidationMessage For="ValueExpression" />
+}
+
+@code {
+
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public bool ShowValidationMessage { get; set; } = true;
+
+    internal string GroupName { get; } =
+        $"radio_{Guid.NewGuid():N}";
+
+    internal bool IsSelected(TValue value)
+    {
+        return EqualityComparer<TValue>.Default.Equals(
+            CurrentValue,
+            value);
+    }
+
+    internal void Select(TValue value)
+    {
+        CurrentValue = value;
+    }
+
+    protected override bool TryParseValueFromString(
+        string? value,
+        out TValue result,
+        out string? validationErrorMessage)
+    {
+        throw new NotSupportedException(
+            $"{nameof(RadioButtonGroup<TValue>)} does not parse string values.");
+    }
+}

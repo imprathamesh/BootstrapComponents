@@ -1,0 +1,46 @@
+@typeparam TValue
+
+<div class="form-check @CssClass">
+    <input type="radio"
+           id="@InputId"
+           name="@Group.GroupName"
+           class="form-check-input"
+           checked="@Group.IsSelected(Value)"
+           @onchange="HandleChange"
+           disabled="@Disabled" />
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="form-check-label"
+               for="@InputId">
+            @Label
+        </label>
+    }
+
+</div>
+
+@code 
+{
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    [CascadingParameter]
+    public RadioButtonGroup<TValue> Group { get; set; } = default!;
+
+    [Parameter]
+    public TValue Value { get; set; } = default!;
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private string InputId =>
+        $"radio_{Guid.NewGuid():N}";
+
+    private void HandleChange(ChangeEventArgs _)
+    {
+        Group.Select(Value);
+    }
+}
