@@ -1,0 +1,74 @@
+<div class="d-flex gap-3 flex-wrap align-items-center">
+    <div class="doughnut-chart" style="--size:@Size;--thickness:@Thickness;width:@Size;height:@Size;background:@GradientStyle;">
+        <div class="doughnut-center">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <div class="doughnut-label">@Label</div>
+            }
+            @if (Percentage > 0)
+            {
+                <div class="doughnut-value">@Percentage</div>
+            }
+        </div>
+    </div>
+    @if (ShowLegend)
+    {
+        <div class="chart-legend">
+            @foreach (var item in Segments.OrderByDescending(a => a.Value))
+            {
+                <div class="legend-item">
+                    <span class="legend-color"
+                          style="background:@item.Color"></span>
+                    <span>@item.Label (@item.Value)</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+@code
+{
+
+    [Parameter]
+    public List<DoughnutSegment> Segments { get; set; } = [];
+
+    [Parameter]
+    public string Size { get; set; } = "220px";
+
+    [Parameter]
+    public string Thickness { get; set; } = "25px";
+
+    [Parameter]
+    public string Label { get; set; } = "Chart";
+
+    [Parameter]
+    public decimal Percentage { get; set; }
+
+    [Parameter]
+    public bool ShowLegend { get; set; } = true;
+
+    private string GradientStyle
+    {
+        get
+        {
+            if (!Segments.Any())
+                return "";
+
+            decimal total = Segments.Sum(x => x.Value);
+
+            decimal current = 0;
+
+            List<string> parts = [];
+
+            foreach (var segment in Segments)
+            {
+                decimal start = (current / total) * 360;
+                current += segment.Value;
+                decimal end = (current / total) * 360;
+
+                parts.Add($"{segment.Color} {start:F2}deg {end:F2}deg");
+            }
+
+            return $"conic-gradient({string.Join(",", parts)})";
+        }
+    }
+}

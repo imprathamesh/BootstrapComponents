@@ -1,0 +1,53 @@
+﻿.doughnut-chart {
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    position: relative;
+    background: conic-gradient( var(--color) calc(var(--percentage) * 1%), #e9ecef 0 );
+}
+
+    .doughnut-chart::before {
+        content: "";
+        position: absolute;
+        inset: var(--thickness);
+        background: white;
+        border-radius: 50%;
+    }
+
+.doughnut-center {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.doughnut-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.doughnut-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+}
+
+    .chart-legend .legend-item {
+        display: flex;
+        gap: 4px;
+        align-items:center;
+    }
+
+        .chart-legend .legend-item .legend-color {
+            width: 8px;
+            height: 8px;
+            border-radius:100%;
+        }
