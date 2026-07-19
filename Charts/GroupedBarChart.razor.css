@@ -1,0 +1,96 @@
+﻿.grouped-chart-container {
+    width: 100%;
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.grouped-chart {
+    height: 400px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+}
+
+.group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.group-bars {
+    height: 350px;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.bar {
+    width: 32px;
+    min-height: 4px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    position: relative;
+}
+.group-bars .bar {
+    flex: 1;
+    min-width: 12px;
+    max-width: 30px;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .85rem;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.bar-value {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .75rem;
+}
+
+.group-label {
+    margin-top: 10px;
+    font-size: .85rem;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}

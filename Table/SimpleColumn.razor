@@ -35,6 +35,9 @@
 
     // NEW: Template column
     [Parameter]
+    public RenderFragment? HeaderTemplate { get; set; }
+    // NEW: Template column
+    [Parameter]
     public RenderFragment<TItem>? Template { get; set; }
     /// <summary>Called internally by SimpleTable to retrieve the cell value as a string.</summary>
     // internal object? GetValue(TItem item) => Value(item);

@@ -5,11 +5,9 @@
 @if (IsOpen)
 {
     <div class="dropdown-menu show p-3 shadow">
-
         <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
             <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="PrevMonth"><i class="bi bi-chevron-left"></i></button>
-            <select class="form-select form-select-sm"
-                    value="@currentMonth" @onchange="MonthChanged">
+            <select class="form-select form-select-sm" value="@currentMonth" @onchange="MonthChanged">
                 @for (int m = 1; m <= 12; m++)
                 {
                     <option value="@m">
@@ -18,8 +16,7 @@
                 }
             </select>
 
-            <select class="form-select form-select-sm"
-                    value="@currentYear" @onchange="YearChanged">
+            <select class="form-select form-select-sm" value="@currentYear" @onchange="YearChanged">
 
                 @for (int y = StartYear; y <= EndYear; y++)
                 {

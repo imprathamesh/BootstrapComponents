@@ -38,7 +38,21 @@
                 </div>
                 @SearchTemplate
             </Column>
-            <Column Size="ColumnSize.Ten" Class="text-end">@ExportTemplate</Column>
+            <Column Size="ColumnSize.Ten" Class="d-flex gap-1 align-items-center justify-content-end">
+
+                @if (HasSelection)
+                {
+                    <div>
+                        <span class="badge bg-primary">
+                            @_selectedRows.Count Selected
+                        </span>
+                    </div>
+                    <button class="btn btn-light" type="button" @onclick="ClearSelection">Clear</button>
+                }
+                <div>
+                    @ExportTemplate
+                </div>
+            </Column>
         </Row>
     }
     @if (Items == null)
@@ -65,12 +79,21 @@
     }
     else
     {
-
-
         <div class="table-responsive @(ListTemplate is not null ? "d-none d-sm-block" : "")">
             <table class="table @Hover() @Striped() @Background()" ondragover="@ondragOver" @attributes="AdditionalAttributes">
+                <caption class="visually-hidden">@Caption</caption>
                 <thead>
                     <tr>
+                        @if (EnableMultiSelectRow)
+                        {
+                            <th style="width:3rem">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked="@IsAllSelected" @onchange="ToggleSelectAll" name="select all rows">
+                                </div>
+                            </th>
+                        }
+
+                     
                         @foreach (var column in VisibleColumns)
                         {
                             @* <th class="@column.HeaderClass">@column.ColumnName</th> *@
@@ -79,16 +102,25 @@
                         @onclick="() => OnHeaderClick(column)">
                         @column.ColumnName
                     </th> *@
-                            <th class="@column.HeaderClass"
-                                style="cursor:@(column.Sortable ? "pointer" : "default")"
-                                @onclick="() => OnSort(column)">
-                                @column.ColumnName
+                            @if (column.HeaderTemplate is not null)
+                            {
+                                <th>
+                                    @column.HeaderTemplate
+                                </th>
+                            }
+                            else
+                            {
+                                <th class="@column.HeaderClass"
+                                    style="cursor:@(column.Sortable ? "pointer" : "default")"
+                                    @onclick="() => OnSort(column)">
+                                    @column.ColumnName
 
-                                @if (column.Sortable && _sortColumn == column.SortKey)
-                                {
-                                    <i class="ms-1 @(_ascending ? "bi-arrow-up" : "bi-arrow-down")"></i>
-                                }
-                            </th>
+                                    @if (column.Sortable && _sortColumn == column.SortKey)
+                                    {
+                                        <i class="ms-1 @(_ascending ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                                    }
+                                </th>
+                            }
                         }
                     </tr>
                 </thead>
@@ -98,6 +130,15 @@
                         @foreach (var item in Items)
                         {
                             <tr>
+                                @if (EnableMultiSelectRow)
+                                {
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" checked="@_selectedRows.Contains(item)" @onchange="e => ToggleRow(item, e)" name="select row">
+                                        </div>
+                                    </td>
+                                }
+
                                 @foreach (var column in VisibleColumns)
                                 {
                                     @* <td class="@column.ValueClass">@column.GetValue(item)</td> *@
@@ -163,6 +204,7 @@
 </CascadingValue>
 
 @code {
+    [Parameter] public string? Caption { get; set; }
     [Parameter] public string? CreateNewLink { get; set; }
     [Parameter] public bool ButtonVisible { get; set; } = true;
     [Parameter] public bool ShowMessage { get; set; } = true;
@@ -178,14 +220,11 @@
     public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
 
     /// <summary>Column definitions supplied as child SimpleColumn components.</summary>
-    [Parameter]
-    public bool MobileView { get; set; } = true;
+    [Parameter] public bool MobileView { get; set; } = true;
 
-    [Parameter, EditorRequired]
-    public RenderFragment? SimpleColumns { get; set; }
+    [Parameter, EditorRequired] public RenderFragment? SimpleColumns { get; set; }
 
-    [Parameter]
-    public RenderFragment? ListTemplate { get; set; }
+    [Parameter] public RenderFragment? ListTemplate { get; set; }
 
     [Parameter] public int Page { get; set; } = 1;
     [Parameter] public int TotalPages { get; set; }
@@ -199,9 +238,7 @@
     [Parameter] public EventCallback<int> PageChanged { get; set; }
     [Parameter] public EventCallback<int> PageSizeChanged { get; set; }
 
-    [Parameter]
-    public EventCallback<SortDefinition> SortChanged { get; set; }
-
+    [Parameter] public EventCallback<SortDefinition> SortChanged { get; set; }
 
     [Parameter] public bool IsHover { get; set; } = true;
     [Parameter] public bool IsStriped { get; set; } = true;
@@ -214,13 +251,50 @@
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    private IEnumerable<SimpleColumn<TItem>> VisibleColumns
-    => _columns.Where(x => x.IsVisible);
+    private IEnumerable<SimpleColumn<TItem>> VisibleColumns => _columns.Where(x => x.IsVisible);
 
     private string? _sortColumn;
     private bool _ascending = true;
 
     private readonly List<SimpleColumn<TItem>> _columns = new();
+
+    [Parameter] public bool EnableMultiSelectRow { get; set; }
+    [Parameter] public EventCallback<IEnumerable<TItem>> SelectedRowsChanged { get; set; }
+
+    public IEnumerable<TItem> SelectedRows => _selectedRows.ToList();
+    private readonly HashSet<TItem> _selectedRows = new();
+    private bool HasSelection => _selectedRows.Count > 0;
+
+    private async Task ClearSelection()
+    {
+        _selectedRows.Clear();
+        await SelectedRowsChanged.InvokeAsync(_selectedRows);
+    }
+    private async Task ToggleRow(TItem item, ChangeEventArgs e)
+    {
+        bool selected = (bool)e.Value!;
+
+        if (selected) _selectedRows.Add(item);
+        else _selectedRows.Remove(item);
+
+        await SelectedRowsChanged.InvokeAsync(_selectedRows);
+    }
+    private async Task ToggleSelectAll(ChangeEventArgs e)
+    {
+        bool selected = (bool)e.Value!;
+
+        _selectedRows.Clear();
+
+        if (selected)
+        {
+            foreach (var item in Items)
+                _selectedRows.Add(item);
+        }
+
+        await SelectedRowsChanged.InvokeAsync(_selectedRows);
+    }
+
+    private bool IsAllSelected => Items.Any() && Items.All(x => _selectedRows.Contains(x));
 
     private void ToggleColumn(SimpleColumn<TItem> column, ChangeEventArgs e)
     {
@@ -331,4 +405,6 @@
 
         await PageSizeChanged.InvokeAsync(size);
     }
+
+   
 }

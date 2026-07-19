@@ -1,0 +1,113 @@
+@typeparam TData
+
+<div class="stacked-chart-container">
+
+    <div class="chart-title">@Title</div>
+
+    @if (ShowLegend)
+    {
+        <div class="chart-legend">
+            @foreach (var series in SeriesNames)
+            {
+                var index = SeriesNames.IndexOf(series);
+
+                <div class="legend-item">
+                    <span class="legend-color"
+                          style="background:@GetColor(index)">
+                    </span>
+
+                    <span>@series</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="stacked-chart">
+
+        @foreach (var item in DataItems)
+        {
+            var series = SeriesSelector(item).ToList();
+
+            <div class="stack-group">
+
+                <div class="stack-bar">
+
+                    @for (var i = 0; i < series.Count; i++)
+                    {
+                        var s = series[i];
+
+                        <div class="segment"
+                             style="height:@GetSegmentHeight(item,s)%;
+                                    background:@GetColor(i)"
+                             title="@($"{s.Name}: {s.Value:N0}")"
+                             @onclick="() => SegmentClicked(item,s)">
+                        </div>
+                    }
+
+                </div>
+
+                <div class="group-label">
+                    @CategorySelector(item)
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter] public IEnumerable<TData> Data { get; set; } = [];
+
+    [Parameter] public Func<TData, string> CategorySelector { get; set; } = default!;
+
+    [Parameter] public Func<TData, IEnumerable<ChartSeries>> SeriesSelector { get; set; } = default!;
+
+    [Parameter] public string Title { get; set; } = "";
+
+    [Parameter] public bool ShowLegend { get; set; } = true;
+
+    [Parameter] public EventCallback<(TData Item, ChartSeries Series)> OnSegmentClick { get; set; }
+
+    [Parameter]
+    public List<string> Colors { get; set; } =
+    [
+        "#4e73df",
+        "#1cc88a",
+        "#36b9cc",
+        "#f6c23e",
+        "#e74a3b"
+    ];
+
+    private List<TData> DataItems => Data.ToList();
+
+    private List<string> SeriesNames =>
+        DataItems
+            .SelectMany(SeriesSelector)
+            .Select(x => x.Name)
+            .Distinct()
+            .ToList();
+
+    private double MaxTotal =>
+        DataItems
+            .Max(x => SeriesSelector(x).Sum(y => y.Value));
+
+    private double GetSegmentHeight(TData item, ChartSeries series)
+    {
+        if (MaxTotal == 0)
+            return 0;
+
+        return (series.Value / MaxTotal) * 100;
+    }
+
+    private string GetColor(int index)
+        => Colors[index % Colors.Count];
+
+    private async Task SegmentClicked(TData item, ChartSeries series)
+    {
+        if (OnSegmentClick.HasDelegate)
+            await OnSegmentClick.InvokeAsync((item, series));
+    }
+}

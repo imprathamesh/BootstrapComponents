@@ -38,7 +38,7 @@
 
                 <!-- Line paths -->
                 <div class="lines-container">
-                    @if (DataItems.Any())
+                    @if (DataItems.Any() || LineDataSets.Any())
                     {
                         @foreach (var lineData in LineDataSets)
                         {
@@ -52,7 +52,9 @@
                                 @for (int i = 0; i < lineData.Data.Count; i++)
                                 {
                                     var point = lineData.Data[i];
-                                    var x = (i * 100) / (lineData.Data.Count - 1);
+                                    @* var x = (i * 100) / (lineData.Data.Count - 1); *@
+                                    var totalPoints = Math.Max(lineData.Data.Count - 1, 1);
+                                    var x = (i * 100.0) / totalPoints;
                                     var y = 100 - CalculatePointYPosition(point);
                                     <circle class="data-point" cx="@(x)%" cy="@(y)%" r="@PointRadius"
                                             fill="@lineData.Color"

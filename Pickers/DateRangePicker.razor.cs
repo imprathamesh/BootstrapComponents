@@ -20,9 +20,7 @@ public partial class DateRangePicker
     [Parameter] public bool TwoMonthView { get; set; } = true;
     [Parameter] public int StartYear { get; set; } = DateTime.Today.Year - 30;
     [Parameter] public int EndYear { get; set; } = DateTime.Today.Year;
-
     [Parameter] public string Label { get; set; } = "Date";
-    [Parameter] public string PlaceHolder { get; set; } = "Date";
 
     private bool IsOpen;
     private DateTime LeftMonth = DateTime.Today;

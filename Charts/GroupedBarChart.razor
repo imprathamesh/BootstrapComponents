@@ -1,0 +1,128 @@
+@typeparam TData
+
+<div class="grouped-chart-container">
+
+    <div class="chart-title">@Title</div>
+
+    @if (ShowLegend)
+    {
+        <div class="chart-legend">
+            @foreach (var series in SeriesNames)
+            {
+                var index = SeriesNames.IndexOf(series);
+
+                <div class="legend-item">
+                    <span class="legend-color"
+                          style="background:@GetColor(index)">
+                    </span>
+
+                    <span>@series</span>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="grouped-chart">
+
+        @foreach (var item in DataItems)
+        {
+            <div class="group">
+
+                <div class="group-bars">
+
+                    @{
+                        var series = SeriesSelector(item).ToList();
+                    }
+
+                    @for (var i = 0; i < series.Count; i++)
+                    {
+                        var s = series[i];
+
+                        <div class="bar"
+                             title="@($"{s.Name}: {s.Value:N0}")"
+                             style="height:@GetHeight(s.Value)%;
+                                    background:@GetColor(i)"
+                             @onclick="() => BarClicked(item, s)">
+
+                            @if (ShowValues && GetHeight(s.Value) > 15)
+                            {
+                                <span class="bar-value">
+                                    @s.Value.ToString(ValueFormat)
+                                </span>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+
+                <div class="group-label">
+                    @CategorySelector(item)
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@code {
+   
+    [Parameter] public IEnumerable<TData> Data { get; set; } = [];
+
+    [Parameter] public Func<TData, string> CategorySelector { get; set; } = default!;
+
+    [Parameter] public Func<TData, IEnumerable<ChartSeries>> SeriesSelector { get; set; } = default!;
+
+    [Parameter] public string Title { get; set; } = "";
+
+    [Parameter] public bool ShowLegend { get; set; } = true;
+
+    [Parameter] public bool ShowValues { get; set; } = true;
+
+    [Parameter] public string ValueFormat { get; set; } = "N0";
+
+    [Parameter] public EventCallback<(TData Item, ChartSeries Series)> OnBarClick { get; set; }
+
+    [Parameter]
+    public List<string> Colors { get; set; } =
+    [
+        "#4e73df",
+        "#1cc88a",
+        "#36b9cc",
+        "#f6c23e",
+        "#e74a3b"
+    ];
+
+    private List<TData> DataItems => Data.ToList();
+
+    private List<string> SeriesNames =>
+        DataItems
+            .SelectMany(SeriesSelector)
+            .Select(x => x.Name)
+            .Distinct()
+            .ToList();
+
+    private double MaxValue =>
+        DataItems
+            .SelectMany(SeriesSelector)
+            .Max(x => x.Value);
+
+    private double GetHeight(double value)
+    {
+        if (MaxValue == 0)
+            return 0;
+
+        return value / MaxValue * 100;
+    }
+
+    private string GetColor(int index)
+        => Colors[index % Colors.Count];
+
+    private async Task BarClicked(TData item, ChartSeries series)
+    {
+        if (OnBarClick.HasDelegate)
+            await OnBarClick.InvokeAsync((item, series));
+    }
+}

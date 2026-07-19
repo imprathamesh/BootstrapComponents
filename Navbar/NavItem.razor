@@ -7,8 +7,8 @@
 else
 {
     <li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
-        <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch">
-            <i class="@Icon"></i>
+        <NavLink class="nav-link menu-link" href="@Link" Match="LinkMatch" aria-label="@LinkTitle">
+            <i class="@Icon" aria-hidden="true"></i>
         </NavLink>
         @if (MobileMenu == false)
         {
@@ -39,6 +39,5 @@ else
     [Parameter] public bool ShowSubMenu { get; set; } = false;
     [Parameter] public bool MobileMenu { get; set; } = false;
     [Parameter] public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 }

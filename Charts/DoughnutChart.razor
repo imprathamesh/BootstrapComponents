@@ -55,8 +55,10 @@
 
             decimal total = Segments.Sum(x => x.Value);
 
-            decimal current = 0;
+            if (total <= 0)
+                return "";
 
+            decimal current = 0;
             List<string> parts = [];
 
             foreach (var segment in Segments)

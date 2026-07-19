@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BootstrapComponents.Enums;
 
 namespace BootstrapComponents.Charts;
 
@@ -12,5 +8,5 @@ public class DoughnutSegment
 
     public decimal Value { get; set; }
 
-    public string Color { get; set; } = "#0d6efd";
+    public string Color { get; set; } = "#0066cc";
 }

@@ -6,7 +6,6 @@
         <input id="selectDate" class="form-control"
                readonly
                value="@SelectedDates(Format(StartDate), Format(EndDate))"
-               placeholder="PlaceHolder"
                @onclick="Toggle" @attributes="AdditionalAttributes" />
         <label for="selectDate">@Label</label>
     </div>
@@ -16,7 +15,6 @@ else
     <input id="selectDate" class="form-control"
            readonly
            value="@SelectedDates(Format(StartDate), Format(EndDate))"
-           placeholder="@PlaceHolder"
            @onclick="Toggle" @attributes="AdditionalAttributes" />
 }
 
@@ -60,7 +58,6 @@ else
                                 <option value="@y">@y</option>
                             }
                         </select>
-
                         <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="NextMonth"><i class="bi bi-chevron-right"></i></button>
                     </div>
 

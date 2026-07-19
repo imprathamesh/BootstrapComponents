@@ -1,0 +1,29 @@
+﻿.stacked-chart-container {
+    width: 100%;
+}
+
+.stacked-chart {
+    height: 400px;
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+}
+
+.stack-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stack-bar {
+    height: 350px;
+    width: 60px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.segment {
+    width: 100%;
+    cursor: pointer;
+}

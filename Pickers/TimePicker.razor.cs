@@ -49,12 +49,20 @@ public partial class TimePicker
         set => UpdateTime(HourInput, value);
     }
 
-    string DisplayTime =>
-        Value is null
-            ? string.Empty
-            : Is24Hour
-                ? Value.Value.ToString(@"HH\:mm")
-                : DateTime.Today.Add(Value.Value).ToString("hh:mm tt");
+    string DisplayTime
+    {
+        get
+        {
+            if (Value is null)
+                return string.Empty;
+
+            var dt = DateTime.Today.Add(Value.Value);
+
+            return Is24Hour
+                ? dt.ToString("HH:mm")
+                : dt.ToString("hh:mm tt");
+        }
+    }
     protected override void OnParametersSet()
     {
         if (Value.HasValue && !Is24Hour)
@@ -68,16 +76,25 @@ public partial class TimePicker
         if (e.Key == "Escape")
             IsOpen = false;
     }
-
     void UpdateTime(int hour, int minute)
     {
-        if (!Is24Hour)
+        minute = Math.Clamp(minute, 0, 59);
+
+        if (Is24Hour)
         {
+            hour = Math.Clamp(hour, 0, 23);
+        }
+        else
+        {
+            hour = Math.Clamp(hour, 1, 12);
+
             if (hour == 12) hour = 0;
+
             if (!IsAM) hour += 12;
         }
 
         Value = new TimeSpan(hour, minute, 0);
+
         ValueChanged.InvokeAsync(Value);
     }
     void SelectHour(int hour) => HourInput = hour;
