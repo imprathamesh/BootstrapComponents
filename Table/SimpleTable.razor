@@ -125,6 +125,9 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
+                    
+                        @CustomTableRow
+                
                     @if (Items is not null)
                     {
                         @foreach (var item in Items)
@@ -214,6 +217,7 @@
     [Parameter] public RenderFragment? EmptyTemplate { get; set; }
     [Parameter] public RenderFragment? ExportTemplate { get; set; }
     [Parameter] public RenderFragment? SearchTemplate { get; set; }
+    [Parameter] public RenderFragment? CustomTableRow { get; set; }
 
     /// <summary>The data source to render rows from.</summary>
     [Parameter, EditorRequired]
