@@ -1,0 +1,8 @@
+<i class="bi bi-@Name @CssClass" aria-hidden="true" @attributes="AdditionalAttributes"></i>
+
+@code
+{
+    [Parameter] public string Name { get; set; } = Icons.ExclamationCircle;
+    [Parameter] public string CssClass { get; set; } = string.Empty;
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}
