@@ -1,4 +1,4 @@
-<div class="d-grid @CssClass" style="grid-template-columns:@GridTemplateColumns; grid-template-rows:@GridTemplateRows; gap:@Gap; @Style" @attributes="@AdditionalAttributes">
+<div class="d-grid @CssClass" style="grid-template-columns:@GridTemplateColumns; grid-template-rows:@GridTemplateRows; gap:@Gap;" @attributes="@AdditionalAttributes">
     @ChildContent
 </div>
 
@@ -12,7 +12,6 @@
     [Parameter] public string Gap { get; set; } = "0.5rem";
 
     [Parameter] public string? CssClass { get; set; }
-    [Parameter] public string? Style { get; set; }
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 

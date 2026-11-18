@@ -127,8 +127,8 @@
     string points(double x, double y) => x + "," + y;
 
     [Parameter] public List<TData> Data { get; set; } = new();
-    [Parameter] public Func<TData, string> XValueSelector { get; set; }
-    [Parameter] public Func<TData, double> YValueSelector { get; set; }
+    [Parameter] public required Func<TData, string> XValueSelector { get; set; }
+    [Parameter] public required Func<TData, double> YValueSelector { get; set; }
     [Parameter] public string Title { get; set; } = "Line Chart";
     [Parameter] public string XAxisTitle { get; set; } = "X Axis";
     [Parameter] public string YAxisTitle { get; set; } = "Y Axis";
@@ -229,16 +229,16 @@
         // If LineDataSets is empty but Data is provided, create a default dataset
         if (!LineDataSets.Any() && Data.Any())
         {
-            LineDataSets = new List<LineDataSet<TData>>
+            var defaultDataset = new LineDataSet<TData>
             {
-                new LineDataSet<TData>
-                {
-                    Data = Data,
-                    Label = "Data",
-                    Color = LineColor,
-                    YValueSelector = YValueSelector
-                }
+                Data = Data,
+                Label = "Data",
+                Color = LineColor,
+                XValueSelector = XValueSelector,
+                YValueSelector = YValueSelector
             };
+
+            LineDataSets.Add(defaultDataset);
         }
 
         if (LineDataSets.Any())
@@ -425,7 +425,7 @@
         public List<TData> Data { get; set; } = new();
         public string Label { get; set; } = "Dataset";
         public string Color { get; set; } = "#4e73df";
-        public Func<TData, string>? XValueSelector { get; set; }
-        public Func<TData, double>? YValueSelector { get; set; }
+        public required Func<TData, string> XValueSelector { get; set; }
+        public required Func<TData, double> YValueSelector { get; set; }
     }
 }

@@ -1,0 +1,133 @@
+@using Microsoft.AspNetCore.Components.Routing
+<nav class="leftmenu d-none d-sm-block" style="background-color:@BackgroundColor">
+    <ul class="menu">
+        @if (!string.IsNullOrEmpty(Logo))
+        {            
+        <li class="logo">
+            <img alt="app logo" src="@Logo" height="32" />
+        </li>
+        }
+      @*   @foreach (var item in Items)
+        {
+            <li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
+                <NavLink class="nav-link menu-link" href="@item.Url" Match="LinkMatch" aria-label="@item.Title">
+                    <i class="@item.Icon" aria-hidden="true"></i>
+                </NavLink>
+
+                @if (MobileMenu == false)
+                {
+                    @if (ShowSubMenu == true)
+                    {
+                        <ul class="sub-menu">
+                            <li>@item.Title</li>
+                            @* @ChildContent
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="no-menu">
+                            <li>@item.Title</li>
+                        </ul>
+                    }
+                }
+            </li>
+        } *@
+        @foreach (var item in Items)
+{
+    @if (item is SidebarMenuItem menuItem)
+    {
+        <li class="nav-item menu-item">
+            <NavLink class="nav-link menu-link"
+                     href="@menuItem.Url"
+                     Match="@menuItem.Match"
+                     aria-label="@menuItem.Title">
+
+                <i class="@menuItem.Icon" aria-hidden="true"></i>
+                @* <span>@menuItem.Title</span> *@
+            </NavLink>
+            <ul class="no-menu">
+                            <li>@item.Title</li>
+             </ul>
+        </li>
+        if (menuItem.ShowSeparator)
+        {
+        <li class="divider"></li>
+        }
+    }
+    else if (item is SidebarMenuItemGroup group)
+    {
+        <li class="nav-item menu-item menu-group">
+         @*    <div class="nav-link menu-link">
+                <i class="@group.Icon" aria-hidden="true"></i>
+                @* <span>@group.Title</span>  
+            </div> *@
+              <NavLink class="nav-link menu-link" aria-label="@group.Title">
+                <i class="@group.Icon" aria-hidden="true"></i>
+                @* <span>@menuItem.Title</span> *@
+            </NavLink>
+            <ul class="sub-menu">
+                <li>@group.Title</li>
+                @foreach (var child in group.Items)
+                {
+                    <li>
+                        <NavLink class="nav-link"
+                                 href="@child.Url"
+                                 Match="@child.Match">
+                            <i class="@child.Icon" aria-hidden="true"></i>
+                            <span>@child.Title</span>
+                        </NavLink>
+                    </li>
+                           if (child.ShowSeparator)
+        {
+                <li class="divider"></li>
+            }
+                }
+            </ul>
+        </li>
+    }
+}
+        @ChildContent
+    </ul>
+    <ul class="menu">
+        @SettingContent
+    </ul>
+</nav>
+
+<nav class="mobile-menu">
+    <ul>
+        @foreach (var item in Items)
+        {            
+        if (item is SidebarMenuItem menuItem && menuItem.MobileMenu)
+                {                    
+            <li class="nav-item menu-item @CssClass" @attributes="AdditionalAttributes">
+                <NavLink class="nav-link menu-link" href="@menuItem.Url" Match="LinkMatch" aria-label="@menuItem.Title">
+                    <i class="@menuItem.Icon" aria-hidden="true"></i>
+                </NavLink>
+            </li>                      
+                 }
+        }
+    </ul>
+    <div class="bottom-space"></div>
+</nav>
+
+@code
+{
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? SettingContent { get; set; }
+    
+    [Parameter] public string? Logo { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; } = "var(--bs-body-bg)";
+
+    [Parameter] public IReadOnlyList<ISidebarMenuItem> Items { get; set; } = [];
+    [Parameter] public string? CssClass { get; set; }
+    [Parameter] public string? LinkTitle { get; set; }
+
+    [Parameter] public bool Divider { get; set; } = false;
+    [Parameter] public string? Link { get; set; }
+    [Parameter] public string? Icon { get; set; }
+
+    [Parameter] public bool ShowSubMenu { get; set; } = false;
+    [Parameter] public bool MobileMenu { get; set; } = false;
+    [Parameter] public NavLinkMatch LinkMatch { get; set; } = NavLinkMatch.Prefix;
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+}

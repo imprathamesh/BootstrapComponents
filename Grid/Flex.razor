@@ -1,0 +1,50 @@
+<div @attributes="AdditionalAttributes" class="@CssClass">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public FlexDirection? Direction { get; set; }
+    [Parameter] public JustifyContent? Justify { get; set; }
+    [Parameter] public AlignItem? Align { get; set; }
+    [Parameter] public FlexWrap? Wrap { get; set; }
+    [Parameter] public FlexGrow? Grow { get; set; }
+    [Parameter] public FlexShrink? Shrink { get; set; }
+    [Parameter] public int? Gap { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass
+    {
+        get
+        {
+            var classes = new List<string>
+            {
+                "d-flex"
+            };
+
+            AddFlex(classes, "flex", Direction?.Name ?? FlexDirection.Row.Name);
+            AddFlex(classes, "justify-content", Justify?.Name ?? JustifyContent.Start.Name);
+            AddFlex(classes, "align-items", Align?.Name ?? AlignItem.Start.Name);
+            AddGap(classes, Gap);
+
+            if (!string.IsNullOrWhiteSpace(Class))
+                classes.Add(Class);
+
+            return string.Join(" ", classes);
+        }
+    }
+
+    private static void AddFlex(List<string> classes, string prefix, string value, string? breakpoint = null)
+    {
+        classes.Add(breakpoint is null ? $"{prefix}-{value}" : $"{prefix}-{breakpoint}-{value}");
+    }
+
+    private static void AddGap(List<string> classes, int? value, string? breakpoint = null)
+    {
+        if (!value.HasValue)
+            return;
+
+        classes.Add(breakpoint is null ? $"gap-{value}" : $"gap-{breakpoint}-{value}");
+    }
+}

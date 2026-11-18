@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BootstrapComponents.Enums;
+﻿namespace BootstrapComponents.Enums;
 
 public sealed class LabelPosition(string name, int value) : SmartList<LabelPosition>(name, value)
 {

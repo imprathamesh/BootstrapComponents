@@ -1,6 +1,4 @@
-﻿using BootstrapComponents.Enums;
-
-namespace BootstrapComponents.Charts;
+﻿namespace BootstrapComponents.Charts;
 
 public class DoughnutSegment
 {

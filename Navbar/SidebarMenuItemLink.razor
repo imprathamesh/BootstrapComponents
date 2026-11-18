@@ -1,0 +1,52 @@
+ 
+
+@if (Item.Children.Count == 0)
+{
+    <a href="@Item.Href"
+       class="menu-item @(Item.IsActive ? "active" : "")">
+
+        @if (!string.IsNullOrWhiteSpace(Item.Icon))
+        {
+            <i class="@Item.Icon"></i>
+        }
+
+        <span>@Item.Text</span>
+
+    </a>
+}
+else
+{
+    <details>
+
+        <summary class="menu-item">
+
+            @if (!string.IsNullOrWhiteSpace(Item.Icon))
+            {
+                <i class="@Item.Icon"></i>
+            }
+
+            <span>@Item.Text</span>
+
+            <i class="bi bi-chevron-down chev"></i>
+
+        </summary>
+
+        <div class="sub">
+
+            @foreach (var child in Item.Children)
+            {
+                <SidebarMenuItemLink Item="child" />
+            }
+
+        </div>
+
+    </details>
+}
+
+
+@code {
+
+    [Parameter, EditorRequired]
+    public SidebarItem Item { get; set; } = default!;
+
+}

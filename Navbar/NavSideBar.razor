@@ -1,0 +1,313 @@
+@using Microsoft.AspNetCore.Components.Routing
+
+<aside class="d-none d-md-block">
+    <input type="checkbox" id="sidebar-toggle" aria-label="Collapse sidebar" @bind="IsCollapsed">
+    @if (IsExtended)
+    {
+        <label for="sidebar-toggle" class="expand-btn" data-tip="Expand sidebar" aria-label="Expand sidebar">
+            <i class="bi bi-chevron-right"></i>
+        </label>
+    }
+    <div class="sidebar">
+        <!-- Primary menu (80px) -->
+        <nav class="rail d-flex flex-column align-items-center gap-1" aria-label="Primary">
+            @if (!string.IsNullOrEmpty(Logo))
+            {
+                <div class="rail-logo d-grid place-items-center mb-2">
+                    <img alt="app logo" src="@Logo" height="32" />
+                </div>
+            }
+            @foreach (var barItem in Items)
+            {
+                <NavLink href="@barItem.Item.Url"
+                         Match="@barItem.Item.Match"
+                         class="@GetRailItemClass(barItem)"
+                         data-tip="@(barItem.Sections.Any() ? null : barItem.Item.Title)"
+                         aria-label="@barItem.Item.Title"
+                         @onmouseenter="() => SelectItem(barItem)">
+                    <i class="@barItem.Item.Icon"></i>
+                </NavLink>
+            }
+            <div class="mt-auto d-flex flex-column align-items-center gap-1">
+                @SettingContent
+                <NavLink href="notifications" class="rail-btn" data-tip="Notifications" aria-label="Notifications"><i class="bi bi-bell"></i></NavLink>
+                <NavLink href="settings" class="rail-btn" data-tip="Settings" aria-label="Settings"><i class="bi bi-gear"></i></NavLink>
+                @ProfileContent
+                @* <a href="#" class="rail-avatar d-flex align-items-center justify-content-center text-white" data-tip="Profile" aria-label="Profile"><i class="bi bi-person"></i></a> *@
+            </div>
+        </nav>
+        <div class="panel @(IsFlyoutVisible ? "flyout-visible" : "")" id="sidebar-extended-panel" @onmouseenter="HandlePanelMouseEnter" @onmouseleave="HandlePanelMouseLeave">
+            <div class="panel-inner">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    @if (DisplayItem is not null)
+                    {
+                        <span class="panel-title">
+                            @DisplayItem.Item.Title
+                        </span>
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            @if (PinnedItem == DisplayItem)
+                            {
+                                <button type="button"
+                                        class="pin-btn pinned"
+                                        title="Unpin menu"
+                                        aria-label="Unpin @DisplayItem.Item.Title"
+                                        @onclick="UnpinItem">
+                                    <i class="bi bi-pin-angle-fill"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="pin-btn" title="Pin menu" aria-label="Pin @DisplayItem.Item.Title" @onclick="() => PinItem(DisplayItem)">
+                                    <i class="bi bi-pin-angle"></i>
+                                </button>
+                            }
+
+                            <label for="sidebar-toggle" class="collapse-btn" aria-label="Collapse sidebar">
+                                <i class="bi bi-chevron-left"></i>
+                            </label>
+                        </div>
+                    }
+                </div>
+                @if (DisplayItem is not null)
+                {
+                    <div class="sidebar-submenu">
+                        @*  <div class="d-flex align-items-center justify-content-between px-2 mb-3">
+                        <span class="panel-title">
+                            @DisplayItem.Item.Title
+                        </span>
+                        <label for="sidebar-toggle" class="collapse-btn" aria-label="Collapse sidebar">
+                            <i class="bi bi-chevron-left"></i>
+                        </label>
+                    </div> *@
+
+                        @*    <label class="search d-flex align-items-center gap-2 px-3 py-2">
+                        <i class="bi bi-search"></i>
+                        <input type="search" placeholder="Search tasks, projects..." />
+                    </label> *@
+
+                        @foreach (var section in DisplayItem.Sections)
+                        {
+                            @if (!string.IsNullOrEmpty(section.Title))
+                            {
+                                <div class="group-label">
+                                    @section.Title
+                                </div>
+                            }
+
+                            @foreach (var item in section.Links)
+                            {
+                                <a href="@item.Url" class="menu-item">
+                                    @if (!string.IsNullOrWhiteSpace(item.Icon))
+                                    {
+                                        <i class="@item.Icon"></i>
+                                    }
+                                    @item.Title
+                                </a>
+                            }
+                            @foreach (var group in section.Groups)
+                            {
+                                <details name="nav-accordion">
+                                    <summary class="menu-item">
+                                        @if (!string.IsNullOrWhiteSpace(group.Icon))
+                                        {
+                                            <i class="@group.Icon"></i>
+                                        }
+                                        @group.Title
+                                        <i class="bi bi-chevron-down chev"></i>
+                                    </summary>
+                                    <div class="sub">
+                                        @foreach (var item in group.Items)
+                                        {
+                                            <a href="@item.Url">@item.Title</a>
+                                        }
+                                    </div>
+                                </details>
+
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</aside>
+
+<nav class="mobile-menu d-block d-md-none">
+    <ul>
+        @foreach (var item in Items.Where(a => a.Item.MobileMenu))
+        {
+            <li class="nav-item">
+                <NavLink href="@item.Item.Url"
+                         class="@GetRailItemClass(item)"
+                         aria-label="@item.Item.Title"
+                         Match="@item.Item.Match">
+                    <i class="@item.Item.Icon"></i>
+                </NavLink>
+            </li>
+        }
+        <li class="nav-item">
+            <a href="#offcanvasExample" role="button" aria-controls="offcanvasExample" data-bs-toggle="offcanvas" class="rail-btn nav-link"><i class="bi bi-three-dots"></i></a>
+        </li>
+    </ul>
+    <div class="bottom-space"></div>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">More</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="d-flex flex-column gap-2">
+                @foreach (var barItem in Items)
+                {
+                    <div class="mobile-more-item">
+                        <NavLink href="@barItem.Item.Url"
+                                 Match="@barItem.Item.Match"
+                                 class="mobile-menu-item">
+                            @if (!string.IsNullOrWhiteSpace(barItem.Item.Icon))
+                            {
+                                <i class="me-2 @barItem.Item.Icon"></i>
+                            }
+                            <span>
+                                @barItem.Item.Title
+                            </span>
+                        </NavLink>
+
+
+                        @foreach (var section in barItem.Sections)
+                        {
+                            <div class="mobile-group-label mt-2">
+                                @section.Title
+                            </div>
+                            <div class="d-flex flex-column gap-1 mt-2 ms-4">
+                                @foreach (var item in section.Links)
+                                {
+                                    <NavLink href="@item.Url"
+                                             Match="@item.Match"
+                                             class="mobile-menu-item">
+                                        @if (!string.IsNullOrWhiteSpace(item.Icon))
+                                        {
+                                            <i class="me-2 @item.Icon"></i>
+                                        }
+                                        <span>
+                                            @item.Title
+                                        </span>
+                                    </NavLink>
+                                }
+                            </div>
+
+                            @foreach (var group in section.Groups)
+                            {
+                                <details class="mobile-menu-group">
+                                    <summary class="mobile-menu-item">
+                                        @if (!string.IsNullOrWhiteSpace(group.Icon))
+                                        {
+                                            <i class="@group.Icon"></i>
+                                        }
+                                        <span>
+                                            @group.Title
+                                        </span>
+                                        <i class="bi bi-chevron-down mobile-menu-chevron"></i>
+                                    </summary>
+
+                                    <div class="mobile-sub">
+                                        @foreach (var item in group.Items)
+                                        {
+                                            <NavLink href="@item.Url" Match="@item.Match">
+                                                @item.Title
+                                            </NavLink>
+                                        }
+                                    </div>
+                                </details>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</nav>
+
+@code
+{
+    private BarItem? SelectedItem;
+    private BarItem? HoveredItem;
+    private BarItem? PinnedItem;
+    private bool IsCollapsed = true;
+
+    private bool IsFlyoutVisible => IsCollapsed && HoveredItem is not null && HoveredItem.Sections.Any();
+
+    [Parameter] public IReadOnlyList<BarItem> Items { get; set; } = [];
+    [Parameter] public bool IsExtended { get; set; } = false;
+    [Parameter] public string? Logo { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; } = "var(--bs-body-bg)";
+    [Parameter] public RenderFragment? SettingContent { get; set; }
+    [Parameter] public RenderFragment? ProfileContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedItem = Items.FirstOrDefault(x => x.Sections.Count > 0);
+        IsCollapsed = !IsExtended;
+    }
+    private void SelectItem(BarItem item)
+    {
+        if (item.Sections.Any())
+            HoveredItem = item;
+        else
+            HoveredItem = null;
+    }
+
+    private void PinItem(BarItem item)
+    {
+        if (!item.Sections.Any())
+            return;
+
+        PinnedItem = item;
+        SelectedItem = item;
+        HoveredItem = null;
+
+        IsCollapsed = false;
+    }
+
+    private void UnpinItem()
+    {
+        PinnedItem = null;
+        IsCollapsed = true;
+        HoveredItem = null;
+    }
+
+    private BarItem? DisplayItem =>
+        HoveredItem?.Sections.Count > 0
+            ? HoveredItem
+            : PinnedItem ?? SelectedItem;
+
+    private string GetRailItemClass(BarItem item)
+    {
+        var classes = "rail-btn";
+
+        if (item.Sections?.Count > 0)
+            classes += " has-flyout";
+
+        if (item.Item.IsActive)
+            classes += " active";
+
+        if (PinnedItem == item)
+            classes += " pinned";
+
+        if (HoveredItem == item)
+            classes += " hovered";
+
+        return classes;
+    }
+    private void HandlePanelMouseEnter()
+    {
+        // Keep the current hovered item while the pointer
+        // moves from the rail into the flyout panel.
+    }
+
+    private void HandlePanelMouseLeave()
+    {
+        HoveredItem = null;
+    }
+}

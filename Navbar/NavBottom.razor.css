@@ -11,7 +11,7 @@
 
     .mobile-menu > ul {
         display: grid;
-        grid-template-columns:repeat(5, 1fr);
+        grid-template-columns:repeat(5, 1`fr);
         list-style-type: none;
         list-style: none;
         padding: 0;

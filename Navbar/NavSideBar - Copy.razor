@@ -1,0 +1,119 @@
+<input type="checkbox" id="sidebar-toggle" aria-label="Collapse sidebar" checked>
+@if (IsExtended)
+{
+    <label for="sidebar-toggle" class="expand-btn" data-tip="Expand sidebar" aria-label="Expand sidebar">
+        <i class="bi bi-chevron-right"></i>
+    </label>
+}
+
+<aside class="sidebar">
+    <!-- Primary menu (80px) -->
+    <nav class="rail d-flex flex-column align-items-center gap-2" aria-label="Primary">
+        @if (!string.IsNullOrEmpty(Logo))
+        {
+            <div class="rail-logo d-grid place-items-center mb-2">
+                <img alt="app logo" src="@Logo" height="32" />
+            </div>
+        }
+        @foreach (var barItem in Items)
+        {
+            <a href="@barItem.Item.Url" Match="@barItem.Item.Match" class="@("rail-btn" + (barItem.Sections?.Count > 0 ? " has-flyout" : "") + (barItem.Item.IsActive ? " active" : ""))" data-tip="@barItem.Item.Title" aria-label="@barItem.Item.Title" @onmouseenter="() => SelectItem(barItem)">
+                <i class="@barItem.Item.Icon"></i>
+            </a>
+        }
+        <div class="mt-auto d-flex flex-column align-items-center gap-2">
+            @SettingContent
+            @ProfileContent
+            <a href="#" class="rail-btn" data-tip="Settings" aria-label="Settings"><i class="bi bi-gear"></i></a>
+            <a href="#" class="rail-avatar d-flex align-items-center justify-content-center text-white" data-tip="Profile" aria-label="Profile"><i class="bi bi-person"></i></a>
+        </div>
+    </nav>
+
+    <div class="panel" id="sidebar-extended-panel">
+        <div class="panel-inner">
+            @if (SelectedItem is not null)
+            {
+                <div class="sidebar-submenu">
+                    <div class="d-flex align-items-center justify-content-between px-2 mb-3">
+                        <span class="panel-title">
+                            @SelectedItem.Item.Title
+                        </span>
+                        <label for="sidebar-toggle" class="collapse-btn" aria-label="Collapse sidebar">
+                            <i class="bi bi-chevron-left"></i>
+                        </label>
+                    </div>
+
+                    @*    <label class="search d-flex align-items-center gap-2 px-3 py-2">
+                        <i class="bi bi-search"></i>
+                        <input type="search" placeholder="Search tasks, projects..." />
+                    </label> *@
+
+                    @foreach (var section in SelectedItem.Sections)
+                    {
+                        <div class="group-label">
+                            @section.Title
+                        </div>
+
+                        @foreach (var group in section.Groups)
+                        {
+                            @if (group.Items.Count == 1)
+                            {
+                                var item = group.Items[0];
+                                <a href="@item.Url" class="menu-item">
+                                    @if (!string.IsNullOrWhiteSpace(item.Icon))
+                                    {
+                                        <i class="@item.Icon"></i>
+                                    }
+                                    @item.Title
+                                </a>
+                            }
+                            else
+                            {
+                                <details name="nav-accordion">
+                                    <summary class="menu-item">
+                                        @if (!string.IsNullOrWhiteSpace(group.Icon))
+                                        {
+                                            <i class="@group.Icon"></i>
+                                        }
+                                        @group.Title
+                                        <i class="bi bi-chevron-down chev"></i>
+                                    </summary>
+                                    <div class="sub">
+                                        @foreach (var item in group.Items)
+                                        {
+                                            <a href="@item.Url">@item.Title</a>
+                                        }
+                                    </div>
+                                </details>
+                            }
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</aside>
+
+@code
+{
+    private BarItem? SelectedItem;
+
+    [Parameter] public IReadOnlyList<BarItem> Items { get; set; } = [];
+    [Parameter] public bool IsExtended { get; set; } = false;
+    [Parameter] public string? Logo { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; } = "var(--bs-body-bg)";
+    [Parameter] public RenderFragment? SettingContent { get; set; }
+    [Parameter] public RenderFragment? ProfileContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedItem = Items.FirstOrDefault();
+    }
+    private void SelectItem(BarItem item)
+    {
+        if (item.Sections.Any())
+        {
+            SelectedItem = item;
+        }
+    }
+}

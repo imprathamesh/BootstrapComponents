@@ -58,8 +58,8 @@
 
 @code {
     [Parameter] public List<TData> Data { get; set; } = new();
-    [Parameter] public Func<TData, string> XValueSelector { get; set; }
-    [Parameter] public Func<TData, double> YValueSelector { get; set; }
+    [Parameter] public required Func<TData, string> XValueSelector { get; set; }
+    [Parameter] public required Func<TData, double> YValueSelector { get; set; }
     [Parameter] public string Title { get; set; } = "Bar Chart";
     [Parameter] public string XAxisTitle { get; set; } = "X Axis";
     [Parameter] public string YAxisTitle { get; set; } = "Y Axis";
